@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.hotel.controller.FeedbackController" styleClass="main-container">
+
+    <!-- Header -->
+    <top>
+        <HBox styleClass="header" alignment="CENTER_LEFT">
+            <VBox HBox.hgrow="ALWAYS">
+                <Label text="NEWNHAM NEXUS" styleClass="header-title"/>
+                <Label text="Feedback Received" styleClass="header-subtitle"/>
+            </VBox>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox alignment="CENTER" spacing="30">
+            <padding><Insets top="50" right="50" bottom="50" left="50"/></padding>
+
+            <!-- Success message -->
+            <VBox alignment="CENTER" spacing="20">
+                <Label text="✓" style="-fx-font-size: 80px; -fx-text-fill: #27ae60; -fx-background-color: #d4edda; -fx-background-radius: 50; -fx-padding: 20 35;"/>
+                <Label text="Thank You!" style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                <Label text="Your feedback has been submitted successfully." style="-fx-font-size: 16px; -fx-text-fill: #7f8c8d;"/>
+            </VBox>
+
+            <!-- Summary card -->
+            <VBox styleClass="card" spacing="15" prefWidth="450" alignment="CENTER">
+                <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
+
+                <Label text="Feedback Summary" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                <Separator/>
+
+                <!-- Rating display -->
+                <HBox alignment="CENTER" spacing="5">
+                    <Label fx:id="submittedRating1" text="★" style="-fx-font-size: 30px; -fx-text-fill: #f39c12;"/>
+                    <Label fx:id="submittedRating2" text="★" style="-fx-font-size: 30px; -fx-text-fill: #f39c12;"/>
+                    <Label fx:id="submittedRating3" text="★" style="-fx-font-size: 30px; -fx-text-fill: #f39c12;"/>
+                    <Label fx:id="submittedRating4" text="★" style="-fx-font-size: 30px; -fx-text-fill: #f39c12;"/>
+                    <Label fx:id="submittedRating5" text="★" style="-fx-font-size: 30px; -fx-text-fill: #bdc3c7;"/>
+                </HBox>
+
+                <GridPane hgap="15" vgap="8" alignment="CENTER">
+                    <Label text="Confirmation #:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <Label fx:id="confNumLabel" text="NNX-2026030501" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                    <Label text="Submitted:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <Label fx:id="submittedDateLabel" text="March 9, 2026" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                </GridPane>
+            </VBox>
+
+            <!-- Appreciation message -->
+            <VBox alignment="CENTER" spacing="10" style="-fx-background-color: #d4edda; -fx-padding: 20; -fx-background-radius: 8;" prefWidth="450">
+                <Label text="Your Opinion Matters!" style="-fx-font-weight: bold; -fx-text-fill: #155724;"/>
+                <Label text="We carefully review all feedback to improve our services. We look forward to welcoming you back soon!" wrapText="true" style="-fx-text-fill: #155724; -fx-text-alignment: center;" maxWidth="400"/>
+            </VBox>
+
+            <!-- Action buttons -->
+            <HBox spacing="20" alignment="CENTER">
+                <Button text="Submit Another Feedback" styleClass="btn-secondary" onAction="#newFeedback" prefWidth="200"/>
+                <Button text="Return to Main Menu" styleClass="btn-primary" onAction="#backToLauncher" prefWidth="200"/>
+            </HBox>
+        </VBox>
+    </center>
+
+    <!-- Footer -->
+    <bottom>
+        <HBox alignment="CENTER">
+            <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+            <Label text="Thank you for choosing NewnhamNexus!" style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;"/>
+        </HBox>
+    </bottom>
+</BorderPane>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.hotel.controller.KioskController" styleClass="main-container">
+
+    <!-- Header -->
+    <top>
+        <HBox styleClass="header" alignment="CENTER_LEFT" spacing="20">
+            <Button text="← Main Menu" styleClass="btn-secondary" onAction="#backToMainMenu"/>
+            <VBox HBox.hgrow="ALWAYS">
+                <Label text="NEWNHAM NEXUS" styleClass="header-title"/>
+                <Label text="Booking Confirmed!" styleClass="header-subtitle"/>
+            </VBox>
+            <Button text="Rules &amp; Regulations" styleClass="rules-button" onAction="#showRules"/>
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <VBox alignment="CENTER" spacing="30">
+                <padding><Insets top="50" right="50" bottom="50" left="50"/></padding>
+
+                <!-- Success icon and message -->
+            <VBox alignment="CENTER" spacing="15">
+                <Label text="✓" style="-fx-font-size: 80px; -fx-text-fill: #27ae60; -fx-background-color: #d4edda; -fx-background-radius: 50; -fx-padding: 20 35;"/>
+                <Label text="Reservation Confirmed!" styleClass="confirmation-message"/>
+                <Label text="Thank you for choosing NewnhamNexus" style="-fx-font-size: 16px; -fx-text-fill: #7f8c8d;"/>
+            </VBox>
+
+            <!-- Confirmation details card -->
+            <VBox styleClass="card" spacing="20" prefWidth="500" alignment="CENTER">
+                <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
+
+                <VBox spacing="10" alignment="CENTER">
+                    <Label text="Confirmation Number" style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;"/>
+                    <Label fx:id="confirmationNumber" text="NNX-2026031500001" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-background-color: #ecf0f1; -fx-padding: 10 20; -fx-background-radius: 5;"/>
+                </VBox>
+
+                <Separator/>
+
+                <GridPane hgap="20" vgap="10" alignment="CENTER">
+                    <Label text="Guest:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <Label fx:id="confGuestName" text="John Smith" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                    <Label text="Check-in:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <Label fx:id="confCheckIn" text="March 15, 2026" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                    <Label text="Check-out:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                    <Label fx:id="confCheckOut" text="March 17, 2026" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                    <Label text="Room:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                    <Label fx:id="confRoom" text="1 × Double Room" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                    <Label text="Estimated Total:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                    <Label fx:id="confTotal" text="\$463.30" style="-fx-text-fill: #27ae60; -fx-font-weight: bold;" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                </GridPane>
+
+                <!-- Loyalty enrollment confirmation -->
+                <VBox fx:id="loyaltyConfirmation" spacing="5" alignment="CENTER" style="-fx-background-color: #fff3cd; -fx-padding: 15; -fx-background-radius: 5;">
+                    <Label text="Nexus Rewards Member" style="-fx-font-weight: bold; -fx-text-fill: #856404;"/>
+                    <HBox spacing="5" alignment="CENTER">
+                        <Label text="Your Loyalty Number:" style="-fx-text-fill: #856404;"/>
+                        <Label fx:id="loyaltyNumber" text="MR-123456" style="-fx-font-weight: bold; -fx-text-fill: #856404;"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+
+            <!-- Important notices -->
+            <VBox styleClass="card" spacing="15" prefWidth="500">
+                <Label text="Important Information" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                <VBox spacing="8">
+                    <HBox spacing="10">
+                        <Label text="•" style="-fx-font-weight: bold; -fx-text-fill: #3498db;"/>
+                        <Label text="Check-in time is 3:00 PM. Early check-in subject to availability." wrapText="true"/>
+                    </HBox>
+                    <HBox spacing="10">
+                        <Label text="•" style="-fx-font-weight: bold; -fx-text-fill: #3498db;"/>
+                        <Label text="Check-out time is 11:00 AM. Late check-out may incur additional charges." wrapText="true"/>
+                    </HBox>
+                    <HBox spacing="10">
+                        <Label text="•" style="-fx-font-weight: bold; -fx-text-fill: #3498db;"/>
+                        <Label text="Payment will be processed at the front desk." wrapText="true"/>
+                    </HBox>
+                    <HBox spacing="10">
+                        <Label text="•" style="-fx-font-weight: bold; -fx-text-fill: #3498db;"/>
+                        <Label text="Please present your ID at check-in." wrapText="true"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+
+            <!-- Email confirmation notice -->
+            <Label text="A confirmation email has been sent to your registered email address." style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d; -fx-font-style: italic;"/>
+
+            <!-- Action buttons -->
+            <HBox spacing="20" alignment="CENTER">
+                <Button text="Print Confirmation" styleClass="btn-secondary" prefWidth="180" prefHeight="45"/>
+                <Button text="New Booking" styleClass="btn-primary" onAction="#startNewBooking" prefWidth="180" prefHeight="45"/>
+            </HBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <!-- Footer -->
+    <bottom>
+        <HBox styleClass="card" alignment="CENTER" spacing="20">
+            <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
+            <Label text="We look forward to welcoming you!" style="-fx-font-size: 14px; -fx-text-fill: #2c3e50;"/>
+            <Label text="|" style="-fx-text-fill: #bdc3c7;"/>
+            <Label text="Questions? Visit our front desk for assistance." style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;"/>
+        </HBox>
+    </bottom>
+</BorderPane>

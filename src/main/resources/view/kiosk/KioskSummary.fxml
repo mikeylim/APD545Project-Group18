@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.hotel.controller.KioskController" styleClass="main-container">
+
+    <!-- Header -->
+    <top>
+        <HBox styleClass="header" alignment="CENTER_LEFT" spacing="20">
+            <Button text="← Main Menu" styleClass="btn-secondary" onAction="#backToMainMenu"/>
+            <VBox HBox.hgrow="ALWAYS">
+                <Label text="NEWNHAM NEXUS" styleClass="header-title"/>
+                <Label text="Step 6 of 6: Review &amp; Confirm" styleClass="header-subtitle"/>
+            </VBox>
+            <Button text="Rules &amp; Regulations" styleClass="rules-button" onAction="#showRules"/>
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <VBox alignment="CENTER" spacing="20">
+                <padding><Insets top="20" bottom="20" left="40" right="40"/></padding>
+
+                <!-- Progress indicator -->
+                <HBox alignment="CENTER" spacing="20">
+                    <VBox alignment="CENTER" spacing="5">
+                        <Label text="✓" styleClass="kiosk-step-indicator kiosk-step-indicator-completed" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+                        <Label text="Guests" style="-fx-font-size: 12px;"/>
+                    </VBox>
+                    <Label text="—" style="-fx-text-fill: #27ae60;"/>
+                    <VBox alignment="CENTER" spacing="5">
+                        <Label text="✓" styleClass="kiosk-step-indicator kiosk-step-indicator-completed" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+                        <Label text="Dates" style="-fx-font-size: 12px;"/>
+                    </VBox>
+                    <Label text="—" style="-fx-text-fill: #27ae60;"/>
+                    <VBox alignment="CENTER" spacing="5">
+                        <Label text="✓" styleClass="kiosk-step-indicator kiosk-step-indicator-completed" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+                        <Label text="Room" style="-fx-font-size: 12px;"/>
+                    </VBox>
+                    <Label text="—" style="-fx-text-fill: #27ae60;"/>
+                    <VBox alignment="CENTER" spacing="5">
+                        <Label text="✓" styleClass="kiosk-step-indicator kiosk-step-indicator-completed" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+                        <Label text="Add-ons" style="-fx-font-size: 12px;"/>
+                    </VBox>
+                    <Label text="—" style="-fx-text-fill: #27ae60;"/>
+                    <VBox alignment="CENTER" spacing="5">
+                        <Label text="✓" styleClass="kiosk-step-indicator kiosk-step-indicator-completed" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+                        <Label text="Details" style="-fx-font-size: 12px;"/>
+                    </VBox>
+                    <Label text="—" style="-fx-text-fill: #27ae60;"/>
+                    <VBox alignment="CENTER" spacing="5">
+                        <Label text="6" styleClass="kiosk-step-indicator kiosk-step-indicator-active" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+                        <Label text="Confirm" style="-fx-font-size: 12px;"/>
+                    </VBox>
+                </HBox>
+
+                <Label text="Review Your Booking" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+
+                <HBox spacing="20" alignment="TOP_CENTER">
+                    <!-- Left column - Booking details -->
+                    <VBox spacing="15" prefWidth="400">
+                        <!-- Guest Information -->
+                        <VBox styleClass="card" spacing="10">
+                            <Label text="Guest Information" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                            <Separator/>
+                            <GridPane hgap="10" vgap="8">
+                                <Label text="Name:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                <Label fx:id="summaryName" text="John Smith" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                                <Label text="Email:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                <Label fx:id="summaryEmail" text="john.smith@email.com" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                                <Label text="Phone:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                                <Label fx:id="summaryPhone" text="+1 (416) 555-0123" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                                <Label text="Guests:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                                <Label fx:id="summaryGuests" text="2 Adults, 0 Children" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                            </GridPane>
+                        </VBox>
+
+                        <!-- Stay Details -->
+                        <VBox styleClass="card" spacing="10">
+                            <Label text="Stay Details" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                            <Separator/>
+                            <GridPane hgap="10" vgap="8">
+                                <Label text="Check-in:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                <Label fx:id="summaryCheckIn" text="March 15, 2026 (3:00 PM)" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                                <Label text="Check-out:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                <Label fx:id="summaryCheckOut" text="March 17, 2026 (11:00 AM)" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                                <Label text="Duration:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                                <Label fx:id="summaryNights" text="2 Nights" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                            </GridPane>
+                        </VBox>
+
+                        <!-- Room Selection -->
+                        <VBox styleClass="card" spacing="10">
+                            <Label text="Room Selection" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                            <Separator/>
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <VBox spacing="3" HBox.hgrow="ALWAYS">
+                                    <Label fx:id="summaryRoomType" text="1 × Double Room" style="-fx-font-weight: bold;"/>
+                                    <Label text="Up to 4 guests, City view" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+                                </VBox>
+                                <Label fx:id="summaryRoomPrice" text="\$150/night" style="-fx-text-fill: #27ae60;"/>
+                            </HBox>
+                        </VBox>
+
+                        <!-- Add-ons -->
+                        <VBox styleClass="card" spacing="10">
+                            <Label text="Add-On Services" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                            <Separator/>
+                            <VBox fx:id="addonsContainer" spacing="8">
+                                <HBox spacing="10">
+                                    <Label text="✓" style="-fx-text-fill: #27ae60;"/>
+                                    <Label text="High-Speed Wi-Fi" HBox.hgrow="ALWAYS"/>
+                                    <Label text="\$10.00"/>
+                                </HBox>
+                                <HBox spacing="10">
+                                    <Label text="✓" style="-fx-text-fill: #27ae60;"/>
+                                    <Label text="Daily Breakfast (2 guests × 2 nights)" HBox.hgrow="ALWAYS"/>
+                                    <Label text="\$100.00"/>
+                                </HBox>
+                            </VBox>
+                            <Label fx:id="noAddonsLabel" text="No add-ons selected" style="-fx-text-fill: #7f8c8d; -fx-font-style: italic;" visible="false"/>
+                        </VBox>
+                    </VBox>
+
+                    <!-- Right column - Price breakdown -->
+                    <VBox spacing="15" prefWidth="350">
+                        <VBox styleClass="card" spacing="15">
+                            <Label text="Price Estimate" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                            <Separator/>
+
+                            <!-- Room charges -->
+                            <VBox spacing="8">
+                                <Label text="Room Charges" style="-fx-font-weight: bold; -fx-text-fill: #7f8c8d;"/>
+                                <HBox>
+                                    <Label text="Double Room × 2 nights" HBox.hgrow="ALWAYS"/>
+                                    <Label fx:id="roomCharges" text="\$300.00"/>
+                                </HBox>
+                            </VBox>
+
+                            <!-- Add-ons charges -->
+                            <VBox spacing="8">
+                                <Label text="Add-On Services" style="-fx-font-weight: bold; -fx-text-fill: #7f8c8d;"/>
+                                <HBox>
+                                    <Label text="Wi-Fi" HBox.hgrow="ALWAYS"/>
+                                    <Label text="\$10.00"/>
+                                </HBox>
+                                <HBox>
+                                    <Label text="Breakfast" HBox.hgrow="ALWAYS"/>
+                                    <Label text="\$100.00"/>
+                                </HBox>
+                            </VBox>
+
+                            <Separator/>
+
+                            <!-- Subtotal -->
+                            <HBox>
+                                <Label text="Subtotal" style="-fx-font-weight: bold;" HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="subtotalAmount" text="\$410.00" style="-fx-font-weight: bold;"/>
+                            </HBox>
+
+                            <!-- Tax -->
+                            <HBox>
+                                <Label text="Tax (13\% HST)" HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="taxAmount" text="\$53.30"/>
+                            </HBox>
+
+                            <!-- Loyalty discount (if applicable) -->
+                            <HBox fx:id="loyaltyDiscountRow" visible="false" managed="false">
+                                <Label text="Loyalty Discount" style="-fx-text-fill: #27ae60;" HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="loyaltyDiscount" text="-\$0.00" style="-fx-text-fill: #27ae60;"/>
+                            </HBox>
+
+                            <Separator style="-fx-border-width: 2;"/>
+
+                            <!-- Total -->
+                            <HBox alignment="CENTER_LEFT">
+                                <Label text="ESTIMATED TOTAL" styleClass="summary-total" HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="totalAmount" text="\$463.30" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #27ae60;"/>
+                            </HBox>
+
+                            <Label text="* Final amount will be confirmed at checkout" style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d; -fx-font-style: italic;"/>
+                        </VBox>
+
+                        <!-- Important notice -->
+                        <VBox styleClass="card" spacing="10" style="-fx-background-color: #d4edda; -fx-border-color: #28a745;">
+                            <Label text="Payment Information" style="-fx-font-weight: bold; -fx-text-fill: #155724;"/>
+                            <Label text="Payment will be processed at the front desk during check-in or check-out. You may pay with cash, card, or loyalty points." wrapText="true" style="-fx-text-fill: #155724; -fx-font-size: 12px;"/>
+                        </VBox>
+
+                        <!-- Loyalty enrollment notice -->
+                        <VBox fx:id="loyaltyEnrollmentNotice" styleClass="card" spacing="10" style="-fx-background-color: #fff3cd; -fx-border-color: #ffc107;">
+                            <Label text="Nexus Rewards Enrollment" style="-fx-font-weight: bold; -fx-text-fill: #856404;"/>
+                            <Label text="You've chosen to join our loyalty program! Your Nexus Rewards number will be issued upon confirmation." wrapText="true" style="-fx-text-fill: #856404; -fx-font-size: 12px;"/>
+                        </VBox>
+                    </VBox>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <!-- Navigation -->
+    <bottom>
+        <HBox alignment="CENTER" spacing="20">
+            <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+            <Button text="← Edit Booking" styleClass="btn-secondary" onAction="#backToGuestDetails" prefWidth="150" prefHeight="50"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Confirm Reservation" styleClass="btn-success btn-large" onAction="#confirmBooking" prefWidth="200" prefHeight="50"/>
+        </HBox>
+    </bottom>
+</BorderPane>

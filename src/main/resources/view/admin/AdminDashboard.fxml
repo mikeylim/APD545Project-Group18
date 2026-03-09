@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.hotel.controller.AdminController" styleClass="main-container" style="-fx-padding: 0;">
+
+    <!-- Sidebar Navigation -->
+    <left>
+        <VBox styleClass="sidebar" spacing="0">
+            <!-- Logo area -->
+            <VBox alignment="CENTER" spacing="5" style="-fx-padding: 20; -fx-border-color: transparent transparent #34495e transparent; -fx-border-width: 0 0 1 0;">
+                <Label text="NEWNHAM NEXUS" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                <Label text="HOTEL" style="-fx-font-size: 14px; -fx-text-fill: #bdc3c7;"/>
+            </VBox>
+
+            <!-- User info -->
+            <VBox alignment="CENTER" spacing="3" style="-fx-padding: 15; -fx-background-color: #34495e;">
+                <Label fx:id="userNameLabel" text="John Admin" style="-fx-font-weight: bold; -fx-text-fill: white;"/>
+                <Label fx:id="userRoleLabel" text="Administrator" style="-fx-font-size: 11px; -fx-text-fill: #3498db;"/>
+            </VBox>
+
+            <!-- Navigation items -->
+            <VBox spacing="0" VBox.vgrow="ALWAYS">
+                <Button text="Dashboard" styleClass="sidebar-item sidebar-item-active" onAction="#showDashboard" maxWidth="Infinity"/>
+                <Button text="Reservations" styleClass="sidebar-item" onAction="#showReservations" maxWidth="Infinity"/>
+                <Button text="Guests" styleClass="sidebar-item" onAction="#showGuests" maxWidth="Infinity"/>
+                <Button text="Payments" styleClass="sidebar-item" onAction="#showPayments" maxWidth="Infinity"/>
+                <Button text="Check-out" styleClass="sidebar-item" onAction="#showCheckout" maxWidth="Infinity"/>
+                <Button text="Waitlist" styleClass="sidebar-item" onAction="#showWaitlist" maxWidth="Infinity"/>
+                <Button text="Feedback" styleClass="sidebar-item" onAction="#showFeedbackManagement" maxWidth="Infinity"/>
+                <Button text="Loyalty" styleClass="sidebar-item" onAction="#showLoyalty" maxWidth="Infinity"/>
+                <Button text="Reports" styleClass="sidebar-item" onAction="#showReports" maxWidth="Infinity"/>
+            </VBox>
+
+            <!-- Logout -->
+            <Button text="Logout" styleClass="sidebar-item" style="-fx-background-color: #c0392b;" onAction="#handleLogout" maxWidth="Infinity"/>
+        </VBox>
+    </left>
+
+    <!-- Main content area -->
+    <center>
+        <VBox spacing="20">
+            <padding><Insets top="25" right="25" bottom="25" left="25"/></padding>
+
+            <!-- Header -->
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <VBox HBox.hgrow="ALWAYS">
+                    <Label text="Dashboard" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                    <Label text="Welcome back! Here's what's happening today." style="-fx-text-fill: #7f8c8d;"/>
+                </VBox>
+                <Label fx:id="dateTimeLabel" text="March 9, 2026 - 10:30 AM" style="-fx-text-fill: #7f8c8d;"/>
+            </HBox>
+
+            <!-- Quick stats -->
+            <HBox spacing="20">
+                <!-- Today's Check-ins -->
+                <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="5">
+                    <Label text="Today's Check-ins" styleClass="stat-label"/>
+                    <Label text="12" styleClass="stat-number" style="-fx-text-fill: #3498db;"/>
+                    <Label text="3 pending" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+                </VBox>
+
+                <!-- Today's Check-outs -->
+                <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="5">
+                    <Label text="Today's Check-outs" styleClass="stat-label"/>
+                    <Label text="8" styleClass="stat-number" style="-fx-text-fill: #e74c3c;"/>
+                    <Label text="2 completed" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+                </VBox>
+
+                <!-- Rooms Occupied -->
+                <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="5">
+                    <Label text="Rooms Occupied" styleClass="stat-label"/>
+                    <Label text="42/50" styleClass="stat-number" style="-fx-text-fill: #27ae60;"/>
+                    <Label text="84\% occupancy" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+                </VBox>
+
+                <!-- Pending Payments -->
+                <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="5">
+                    <Label text="Pending Payments" styleClass="stat-label"/>
+                    <Label text="\$2,450" styleClass="stat-number" style="-fx-text-fill: #f39c12;"/>
+                    <Label text="5 reservations" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+                </VBox>
+            </HBox>
+
+            <!-- Quick actions and recent activity -->
+            <HBox spacing="20" VBox.vgrow="ALWAYS">
+                <!-- Quick Actions -->
+                <VBox styleClass="card" spacing="15" prefWidth="300">
+                    <Label text="Quick Actions" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    <Separator/>
+                    <Button text="+ New Reservation (Phone)" styleClass="btn-primary" maxWidth="Infinity" onAction="#newReservation"/>
+                    <Button text="Search Guest" styleClass="btn-secondary" maxWidth="Infinity" onAction="#showGuests"/>
+                    <Button text="Process Payment" styleClass="btn-secondary" maxWidth="Infinity" onAction="#showPayments"/>
+                    <Button text="View Waitlist" styleClass="btn-secondary" maxWidth="Infinity" onAction="#showWaitlist"/>
+                    <Button text="Generate Report" styleClass="btn-secondary" maxWidth="Infinity" onAction="#showReports"/>
+                </VBox>
+
+                <!-- Recent Reservations -->
+                <VBox styleClass="card" spacing="15" HBox.hgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT">
+                        <Label text="Recent Reservations" style="-fx-font-size: 16px; -fx-font-weight: bold;" HBox.hgrow="ALWAYS"/>
+                        <Button text="View All" styleClass="btn-small btn-secondary" onAction="#showReservations"/>
+                    </HBox>
+                    <Separator/>
+
+                    <TableView fx:id="recentReservationsTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn text="Conf. #" prefWidth="100"/>
+                            <TableColumn text="Guest Name" prefWidth="150"/>
+                            <TableColumn text="Room" prefWidth="100"/>
+                            <TableColumn text="Check-in" prefWidth="100"/>
+                            <TableColumn text="Status" prefWidth="80"/>
+                        </columns>
+                        <placeholder>
+                            <Label text="No recent reservations"/>
+                        </placeholder>
+                    </TableView>
+                </VBox>
+
+                <!-- Notifications -->
+                <VBox styleClass="card" spacing="15" prefWidth="280">
+                    <Label text="Notifications" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    <Separator/>
+                    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
+                        <VBox spacing="10">
+                            <!-- Notification items -->
+                            <VBox spacing="3" style="-fx-background-color: #fff3cd; -fx-padding: 10; -fx-background-radius: 5;">
+                                <Label text="Room Available" style="-fx-font-weight: bold; -fx-text-fill: #856404; -fx-font-size: 12px;"/>
+                                <Label text="Double Room #205 is now available" wrapText="true" style="-fx-font-size: 11px; -fx-text-fill: #856404;"/>
+                                <Label text="2 min ago" style="-fx-font-size: 10px; -fx-text-fill: #b8860b;"/>
+                            </VBox>
+
+                            <VBox spacing="3" style="-fx-background-color: #d4edda; -fx-padding: 10; -fx-background-radius: 5;">
+                                <Label text="New Booking" style="-fx-font-weight: bold; -fx-text-fill: #155724; -fx-font-size: 12px;"/>
+                                <Label text="Reservation NNX-2026030901 confirmed" wrapText="true" style="-fx-font-size: 11px; -fx-text-fill: #155724;"/>
+                                <Label text="15 min ago" style="-fx-font-size: 10px; -fx-text-fill: #28a745;"/>
+                            </VBox>
+
+                            <VBox spacing="3" style="-fx-background-color: #d1ecf1; -fx-padding: 10; -fx-background-radius: 5;">
+                                <Label text="Waitlist Update" style="-fx-font-weight: bold; -fx-text-fill: #0c5460; -fx-font-size: 12px;"/>
+                                <Label text="3 guests on waitlist for Penthouse" wrapText="true" style="-fx-font-size: 11px; -fx-text-fill: #0c5460;"/>
+                                <Label text="1 hour ago" style="-fx-font-size: 10px; -fx-text-fill: #17a2b8;"/>
+                            </VBox>
+
+                            <VBox spacing="3" style="-fx-background-color: #f8d7da; -fx-padding: 10; -fx-background-radius: 5;">
+                                <Label text="Payment Pending" style="-fx-font-weight: bold; -fx-text-fill: #721c24; -fx-font-size: 12px;"/>
+                                <Label text="Reservation #NNX-2026030845 balance due" wrapText="true" style="-fx-font-size: 11px; -fx-text-fill: #721c24;"/>
+                                <Label text="3 hours ago" style="-fx-font-size: 10px; -fx-text-fill: #dc3545;"/>
+                            </VBox>
+                        </VBox>
+                    </ScrollPane>
+                </VBox>
+            </HBox>
+        </VBox>
+    </center>
+</BorderPane>

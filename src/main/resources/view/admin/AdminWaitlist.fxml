@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import java.lang.String?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.hotel.controller.AdminController" styleClass="main-container" style="-fx-padding: 0;">
+
+    <!-- Sidebar -->
+    <left>
+        <VBox styleClass="sidebar" spacing="0">
+            <VBox alignment="CENTER" spacing="5" style="-fx-padding: 20; -fx-border-color: transparent transparent #34495e transparent;">
+                <Label text="NEWNHAM NEXUS" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                <Label text="HOTEL" style="-fx-font-size: 14px; -fx-text-fill: #bdc3c7;"/>
+            </VBox>
+            <VBox alignment="CENTER" spacing="3" style="-fx-padding: 15; -fx-background-color: #34495e;">
+                <Label fx:id="userNameLabel" text="John Admin" style="-fx-font-weight: bold; -fx-text-fill: white;"/>
+                <Label fx:id="userRoleLabel" text="Administrator" style="-fx-font-size: 11px; -fx-text-fill: #3498db;"/>
+            </VBox>
+            <VBox spacing="0" VBox.vgrow="ALWAYS">
+                <Button text="Dashboard" styleClass="sidebar-item" onAction="#showDashboard" maxWidth="Infinity"/>
+                <Button text="Reservations" styleClass="sidebar-item" onAction="#showReservations" maxWidth="Infinity"/>
+                <Button text="Guests" styleClass="sidebar-item" onAction="#showGuests" maxWidth="Infinity"/>
+                <Button text="Payments" styleClass="sidebar-item" onAction="#showPayments" maxWidth="Infinity"/>
+                <Button text="Check-out" styleClass="sidebar-item" onAction="#showCheckout" maxWidth="Infinity"/>
+                <Button text="Waitlist" styleClass="sidebar-item sidebar-item-active" onAction="#showWaitlist" maxWidth="Infinity"/>
+                <Button text="Feedback" styleClass="sidebar-item" onAction="#showFeedbackManagement" maxWidth="Infinity"/>
+                <Button text="Loyalty" styleClass="sidebar-item" onAction="#showLoyalty" maxWidth="Infinity"/>
+                <Button text="Reports" styleClass="sidebar-item" onAction="#showReports" maxWidth="Infinity"/>
+            </VBox>
+            <Button text="Logout" styleClass="sidebar-item" style="-fx-background-color: #c0392b;" onAction="#handleLogout" maxWidth="Infinity"/>
+        </VBox>
+    </left>
+
+    <!-- Main content -->
+    <center>
+        <VBox spacing="20">
+            <padding><Insets top="25" right="25" bottom="25" left="25"/></padding>
+
+            <!-- Header -->
+            <HBox alignment="CENTER_LEFT">
+                <VBox HBox.hgrow="ALWAYS">
+                    <Label text="Waitlist Management" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                    <Label text="Manage guests waiting for room availability" style="-fx-text-fill: #7f8c8d;"/>
+                </VBox>
+                <Button text="+ Add to Waitlist" styleClass="btn-primary" onAction="#addToWaitlist"/>
+            </HBox>
+
+            <!-- Stats -->
+            <HBox spacing="20">
+                <VBox styleClass="stat-card" spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Total Waiting" styleClass="stat-label"/>
+                    <Label text="12" styleClass="stat-number" style="-fx-text-fill: #3498db;"/>
+                </VBox>
+                <VBox styleClass="stat-card" spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Single Room" styleClass="stat-label"/>
+                    <Label text="3" styleClass="stat-number"/>
+                </VBox>
+                <VBox styleClass="stat-card" spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Double Room" styleClass="stat-label"/>
+                    <Label text="5" styleClass="stat-number"/>
+                </VBox>
+                <VBox styleClass="stat-card" spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Deluxe" styleClass="stat-label"/>
+                    <Label text="2" styleClass="stat-number"/>
+                </VBox>
+                <VBox styleClass="stat-card" spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Penthouse" styleClass="stat-label"/>
+                    <Label text="2" styleClass="stat-number"/>
+                </VBox>
+            </HBox>
+
+            <!-- Filter and notification settings -->
+            <HBox styleClass="card" spacing="15" alignment="CENTER_LEFT">
+                <ComboBox fx:id="waitlistRoomFilter" promptText="Room Type" prefWidth="150">
+                    <items>
+                        <javafx.collections.FXCollections fx:factory="observableArrayList">
+                            <String fx:value="All Room Types"/>
+                            <String fx:value="Single"/>
+                            <String fx:value="Double"/>
+                            <String fx:value="Deluxe"/>
+                            <String fx:value="Penthouse"/>
+                        </javafx.collections.FXCollections>
+                    </items>
+                </ComboBox>
+                <DatePicker fx:id="waitlistDateFilter" promptText="Requested Date"/>
+                <Button text="Filter" styleClass="btn-secondary" onAction="#filterWaitlist"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <CheckBox fx:id="notificationsCheckbox" text="Receive availability notifications" selected="true"/>
+            </HBox>
+
+            <!-- Waitlist table -->
+            <VBox styleClass="card" spacing="15" VBox.vgrow="ALWAYS">
+                <TableView fx:id="waitlistTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn text="Position" prefWidth="70"/>
+                        <TableColumn text="Guest Name" prefWidth="150"/>
+                        <TableColumn text="Phone" prefWidth="120"/>
+                        <TableColumn text="Room Type" prefWidth="100"/>
+                        <TableColumn text="Requested Dates" prefWidth="150"/>
+                        <TableColumn text="Guests" prefWidth="70"/>
+                        <TableColumn text="Added On" prefWidth="100"/>
+                        <TableColumn text="Actions" prefWidth="150"/>
+                    </columns>
+                    <placeholder>
+                        <Label text="No guests on the waitlist"/>
+                    </placeholder>
+                </TableView>
+            </VBox>
+
+            <!-- Room availability notification -->
+            <VBox styleClass="card" spacing="10" style="-fx-background-color: #d4edda; -fx-border-color: #28a745;">
+                <HBox alignment="CENTER_LEFT">
+                    <Label text="Room Now Available!" style="-fx-font-weight: bold; -fx-text-fill: #155724;" HBox.hgrow="ALWAYS"/>
+                    <Label text="Just now" style="-fx-text-fill: #155724; -fx-font-size: 11px;"/>
+                </HBox>
+                <Label text="Double Room #205 is now available. 3 guests on waitlist match this room type." style="-fx-text-fill: #155724;"/>
+                <HBox spacing="10">
+                    <Button text="View Matching Guests" styleClass="btn-success"/>
+                    <Button text="Dismiss" styleClass="btn-secondary"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </center>
+
+    <!-- Add to waitlist dialog panel -->
+    <right>
+        <VBox styleClass="card" spacing="15" prefWidth="350" style="-fx-background-color: #f8f9fa;">
+            <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+            <HBox alignment="CENTER_LEFT">
+                <Label text="Add to Waitlist" style="-fx-font-size: 16px; -fx-font-weight: bold;" HBox.hgrow="ALWAYS"/>
+                <Button text="×" styleClass="btn-small" style="-fx-background-color: transparent;"/>
+            </HBox>
+
+            <Separator/>
+
+            <VBox spacing="8">
+                <Label text="Guest Name *" styleClass="form-label"/>
+                <TextField fx:id="waitlistGuestName" styleClass="form-field" promptText="Full name"/>
+            </VBox>
+
+            <VBox spacing="8">
+                <Label text="Phone Number *" styleClass="form-label"/>
+                <TextField fx:id="waitlistPhone" styleClass="form-field" promptText="+1 (XXX) XXX-XXXX"/>
+            </VBox>
+
+            <VBox spacing="8">
+                <Label text="Email" styleClass="form-label"/>
+                <TextField fx:id="waitlistEmail" styleClass="form-field" promptText="email@example.com"/>
+            </VBox>
+
+            <VBox spacing="8">
+                <Label text="Room Type *" styleClass="form-label"/>
+                <ComboBox fx:id="waitlistRoomType" promptText="Select room type" prefWidth="200">
+                    <items>
+                        <javafx.collections.FXCollections fx:factory="observableArrayList">
+                            <String fx:value="Single"/>
+                            <String fx:value="Double"/>
+                            <String fx:value="Deluxe"/>
+                            <String fx:value="Penthouse"/>
+                        </javafx.collections.FXCollections>
+                    </items>
+                </ComboBox>
+            </VBox>
+
+            <VBox spacing="8">
+                <Label text="Desired Check-in *" styleClass="form-label"/>
+                <DatePicker fx:id="waitlistCheckIn"/>
+            </VBox>
+
+            <VBox spacing="8">
+                <Label text="Desired Check-out *" styleClass="form-label"/>
+                <DatePicker fx:id="waitlistCheckOut"/>
+            </VBox>
+
+            <VBox spacing="8">
+                <Label text="Number of Guests" styleClass="form-label"/>
+                <HBox spacing="10">
+                    <Spinner fx:id="waitlistAdults" prefWidth="80" min="1" max="10" initialValue="1"/>
+                    <Label text="Adults"/>
+                    <Spinner fx:id="waitlistChildren" prefWidth="80" min="0" max="10" initialValue="0"/>
+                    <Label text="Children"/>
+                </HBox>
+            </VBox>
+
+            <VBox spacing="8">
+                <Label text="Notes" styleClass="form-label"/>
+                <TextArea fx:id="waitlistNotes" promptText="Additional notes..." prefHeight="60"/>
+            </VBox>
+
+            <Separator/>
+
+            <Button text="Add to Waitlist" styleClass="btn-primary" maxWidth="Infinity" onAction="#confirmAddWaitlist"/>
+            <Button text="Cancel" styleClass="btn-secondary" maxWidth="Infinity"/>
+        </VBox>
+    </right>
+</BorderPane>

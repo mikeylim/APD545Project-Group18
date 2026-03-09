@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.hotel.controller.KioskController" styleClass="main-container">
+
+    <!-- Header -->
+    <top>
+        <HBox styleClass="header" alignment="CENTER_LEFT" spacing="20">
+            <Button text="← Main Menu" styleClass="btn-secondary" onAction="#backToMainMenu"/>
+            <VBox HBox.hgrow="ALWAYS">
+                <Label text="NEWNHAM NEXUS" styleClass="header-title"/>
+                <Label text="Step 4 of 6: Add-On Services" styleClass="header-subtitle"/>
+            </VBox>
+            <Button text="Rules &amp; Regulations" styleClass="rules-button" onAction="#showRules"/>
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <VBox alignment="CENTER" spacing="20">
+                <padding><Insets top="20" bottom="20" left="40" right="40"/></padding>
+
+                <!-- Progress indicator -->
+                <HBox alignment="CENTER" spacing="20">
+                    <VBox alignment="CENTER" spacing="5">
+                        <Label text="✓" styleClass="kiosk-step-indicator kiosk-step-indicator-completed" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+                        <Label text="Guests" style="-fx-font-size: 12px;"/>
+                    </VBox>
+                    <Label text="—" style="-fx-text-fill: #27ae60;"/>
+                    <VBox alignment="CENTER" spacing="5">
+                        <Label text="✓" styleClass="kiosk-step-indicator kiosk-step-indicator-completed" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+                        <Label text="Dates" style="-fx-font-size: 12px;"/>
+                    </VBox>
+                    <Label text="—" style="-fx-text-fill: #27ae60;"/>
+                    <VBox alignment="CENTER" spacing="5">
+                        <Label text="✓" styleClass="kiosk-step-indicator kiosk-step-indicator-completed" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+                        <Label text="Room" style="-fx-font-size: 12px;"/>
+                    </VBox>
+                    <Label text="—" style="-fx-text-fill: #27ae60;"/>
+                    <VBox alignment="CENTER" spacing="5">
+                        <Label text="4" styleClass="kiosk-step-indicator kiosk-step-indicator-active" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+                        <Label text="Add-ons" style="-fx-font-size: 12px;"/>
+                    </VBox>
+                    <Label text="—" style="-fx-text-fill: #bdc3c7;"/>
+                    <VBox alignment="CENTER" spacing="5">
+                        <Label text="5" styleClass="kiosk-step-indicator" style="-fx-text-fill: white;"/>
+                        <Label text="Details" style="-fx-font-size: 12px; -fx-text-fill: #bdc3c7;"/>
+                    </VBox>
+                    <Label text="—" style="-fx-text-fill: #bdc3c7;"/>
+                    <VBox alignment="CENTER" spacing="5">
+                        <Label text="6" styleClass="kiosk-step-indicator" style="-fx-text-fill: white;"/>
+                        <Label text="Confirm" style="-fx-font-size: 12px; -fx-text-fill: #bdc3c7;"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Main content -->
+                <VBox styleClass="card" spacing="25" prefWidth="800">
+                    <padding><Insets top="25" right="25" bottom="25" left="25"/></padding>
+
+                    <VBox spacing="5">
+                        <Label text="Enhance Your Stay" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                        <Label text="Select optional services to make your visit even more enjoyable" style="-fx-text-fill: #7f8c8d;"/>
+                    </VBox>
+
+                    <!-- Add-on items -->
+                    <VBox spacing="15">
+                        <!-- WiFi -->
+                        <HBox fx:id="wifiItem" styleClass="addon-item" spacing="20" alignment="CENTER_LEFT">
+                            <CheckBox fx:id="wifiCheckbox"/>
+                            <VBox spacing="3" HBox.hgrow="ALWAYS">
+                                <Label text="High-Speed Wi-Fi" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                                <Label text="Unlimited high-speed internet access throughout your stay" style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;"/>
+                            </VBox>
+                            <VBox alignment="CENTER_RIGHT" spacing="2">
+                                <Label text="\$10" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #27ae60;"/>
+                                <Label text="per reservation" style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Breakfast -->
+                        <HBox fx:id="breakfastItem" styleClass="addon-item" spacing="20" alignment="CENTER_LEFT">
+                            <CheckBox fx:id="breakfastCheckbox"/>
+                            <VBox spacing="3" HBox.hgrow="ALWAYS">
+                                <Label text="Daily Breakfast Buffet" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                                <Label text="Full breakfast buffet with continental and hot options (per guest)" style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;"/>
+                            </VBox>
+                            <VBox alignment="CENTER_RIGHT" spacing="2">
+                                <Label text="\$25" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #27ae60;"/>
+                                <Label text="per night / per guest" style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Parking -->
+                        <HBox fx:id="parkingItem" styleClass="addon-item" spacing="20" alignment="CENTER_LEFT">
+                            <CheckBox fx:id="parkingCheckbox"/>
+                            <VBox spacing="3" HBox.hgrow="ALWAYS">
+                                <Label text="Valet Parking" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                                <Label text="Secure underground parking with valet service" style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;"/>
+                            </VBox>
+                            <VBox alignment="CENTER_RIGHT" spacing="2">
+                                <Label text="\$30" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #27ae60;"/>
+                                <Label text="per night" style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Spa -->
+                        <HBox fx:id="spaItem" styleClass="addon-item" spacing="20" alignment="CENTER_LEFT">
+                            <CheckBox fx:id="spaCheckbox"/>
+                            <VBox spacing="3" HBox.hgrow="ALWAYS">
+                                <Label text="Spa Package" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                                <Label text="60-minute massage and access to spa facilities (per guest)" style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;"/>
+                            </VBox>
+                            <VBox alignment="CENTER_RIGHT" spacing="2">
+                                <Label text="\$75" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #27ae60;"/>
+                                <Label text="per reservation / per guest" style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Airport Transfer -->
+                        <HBox fx:id="airportItem" styleClass="addon-item" spacing="20" alignment="CENTER_LEFT">
+                            <CheckBox fx:id="airportCheckbox"/>
+                            <VBox spacing="3" HBox.hgrow="ALWAYS">
+                                <Label text="Airport Shuttle" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                                <Label text="Round-trip shuttle service to/from North York area" style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;"/>
+                            </VBox>
+                            <VBox alignment="CENTER_RIGHT" spacing="2">
+                                <Label text="\$50" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #27ae60;"/>
+                                <Label text="per reservation" style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Price impact summary -->
+                    <VBox spacing="10" style="-fx-background-color: #f8f9fa; -fx-padding: 20; -fx-background-radius: 8;">
+                        <Label text="Price Impact Summary" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                        <Separator/>
+                        <HBox alignment="CENTER_LEFT">
+                            <Label text="Room Total (2 nights):" HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="roomTotalLabel" text="\$300.00" style="-fx-font-weight: bold;"/>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT">
+                            <Label text="Add-ons Selected:" HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="addonsSelectedLabel" text="\$0.00" style="-fx-font-weight: bold;"/>
+                        </HBox>
+                        <Separator/>
+                        <HBox alignment="CENTER_LEFT">
+                            <Label text="Subtotal:" style="-fx-font-size: 16px; -fx-font-weight: bold;" HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="subtotalLabel" text="\$300.00" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #27ae60;"/>
+                        </HBox>
+                        <Label text="* Tax will be calculated at checkout" style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d; -fx-font-style: italic;"/>
+                    </VBox>
+
+                    <Label text="You can skip add-ons if you prefer. They can also be added later at the front desk." style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d; -fx-font-style: italic;"/>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <!-- Navigation -->
+    <bottom>
+        <HBox alignment="CENTER" spacing="20">
+            <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+            <Button text="← Back" styleClass="btn-secondary" onAction="#backToRoomSelection" prefWidth="150" prefHeight="50"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Skip Add-ons" styleClass="btn-secondary" onAction="#skipAddOns" prefWidth="150" prefHeight="50"/>
+            <Button text="Continue →" styleClass="btn-primary" onAction="#goToGuestDetails" prefWidth="150" prefHeight="50"/>
+        </HBox>
+    </bottom>
+</BorderPane>

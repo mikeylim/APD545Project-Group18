@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import java.lang.String?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.hotel.controller.AdminController" styleClass="main-container" style="-fx-padding: 0;">
+
+    <!-- Sidebar -->
+    <left>
+        <VBox styleClass="sidebar" spacing="0">
+            <VBox alignment="CENTER" spacing="5" style="-fx-padding: 20; -fx-border-color: transparent transparent #34495e transparent;">
+                <Label text="NEWNHAM NEXUS" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                <Label text="HOTEL" style="-fx-font-size: 14px; -fx-text-fill: #bdc3c7;"/>
+            </VBox>
+            <VBox alignment="CENTER" spacing="3" style="-fx-padding: 15; -fx-background-color: #34495e;">
+                <Label fx:id="userNameLabel" text="John Admin" style="-fx-font-weight: bold; -fx-text-fill: white;"/>
+                <Label fx:id="userRoleLabel" text="Administrator" style="-fx-font-size: 11px; -fx-text-fill: #3498db;"/>
+            </VBox>
+            <VBox spacing="0" VBox.vgrow="ALWAYS">
+                <Button text="Dashboard" styleClass="sidebar-item" onAction="#showDashboard" maxWidth="Infinity"/>
+                <Button text="Reservations" styleClass="sidebar-item" onAction="#showReservations" maxWidth="Infinity"/>
+                <Button text="Guests" styleClass="sidebar-item" onAction="#showGuests" maxWidth="Infinity"/>
+                <Button text="Payments" styleClass="sidebar-item sidebar-item-active" onAction="#showPayments" maxWidth="Infinity"/>
+                <Button text="Check-out" styleClass="sidebar-item" onAction="#showCheckout" maxWidth="Infinity"/>
+                <Button text="Waitlist" styleClass="sidebar-item" onAction="#showWaitlist" maxWidth="Infinity"/>
+                <Button text="Feedback" styleClass="sidebar-item" onAction="#showFeedbackManagement" maxWidth="Infinity"/>
+                <Button text="Loyalty" styleClass="sidebar-item" onAction="#showLoyalty" maxWidth="Infinity"/>
+                <Button text="Reports" styleClass="sidebar-item" onAction="#showReports" maxWidth="Infinity"/>
+            </VBox>
+            <Button text="Logout" styleClass="sidebar-item" style="-fx-background-color: #c0392b;" onAction="#handleLogout" maxWidth="Infinity"/>
+        </VBox>
+    </left>
+
+    <!-- Main content -->
+    <center>
+        <HBox spacing="20">
+            <padding><Insets top="25" right="25" bottom="25" left="25"/></padding>
+
+            <!-- Left: Search and select reservation -->
+            <VBox spacing="20" HBox.hgrow="ALWAYS">
+                <VBox>
+                    <Label text="Payment Processing" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                    <Label text="Process payments, deposits, and refunds" style="-fx-text-fill: #7f8c8d;"/>
+                </VBox>
+
+                <!-- Search reservation -->
+                <VBox styleClass="card" spacing="15">
+                    <Label text="Find Reservation" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    <HBox spacing="10">
+                        <TextField fx:id="paymentSearchField" promptText="Enter confirmation # or guest name" HBox.hgrow="ALWAYS" styleClass="form-field"/>
+                        <Button text="Search" styleClass="btn-primary" onAction="#searchForPayment"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Pending payments table -->
+                <VBox styleClass="card" spacing="15" VBox.vgrow="ALWAYS">
+                    <Label text="Reservations with Outstanding Balance" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    <TableView fx:id="pendingPaymentsTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn text="Conf. #" prefWidth="120"/>
+                            <TableColumn text="Guest" prefWidth="140"/>
+                            <TableColumn text="Room" prefWidth="80"/>
+                            <TableColumn text="Total" prefWidth="80"/>
+                            <TableColumn text="Paid" prefWidth="80"/>
+                            <TableColumn text="Balance" prefWidth="80"/>
+                            <TableColumn text="Select" prefWidth="60"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </VBox>
+
+            <!-- Right: Payment form -->
+            <VBox styleClass="card" spacing="20" prefWidth="400">
+                <Label text="Process Payment" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                <Separator/>
+
+                <!-- Selected reservation info -->
+                <VBox spacing="8" style="-fx-background-color: #ecf0f1; -fx-padding: 15; -fx-background-radius: 5;">
+                    <Label text="Selected Reservation" style="-fx-font-weight: bold;"/>
+                    <Label fx:id="selectedConfNum" text="NNX-2026030901" style="-fx-text-fill: #3498db;"/>
+                    <Label fx:id="selectedGuestName" text="John Smith"/>
+                    <HBox spacing="20">
+                        <VBox>
+                            <Label text="Total Due" style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;"/>
+                            <Label fx:id="totalDueLabel" text="\$463.30" style="-fx-font-weight: bold;"/>
+                        </VBox>
+                        <VBox>
+                            <Label text="Paid" style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;"/>
+                            <Label fx:id="paidLabel" text="\$100.00" style="-fx-font-weight: bold; -fx-text-fill: #27ae60;"/>
+                        </VBox>
+                        <VBox>
+                            <Label text="Balance" style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;"/>
+                            <Label fx:id="balanceLabel" text="\$363.30" style="-fx-font-weight: bold; -fx-text-fill: #e74c3c;"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <!-- Payment type -->
+                <VBox spacing="8">
+                    <Label text="Payment Type" styleClass="form-label"/>
+                    <HBox spacing="10">
+                        <ToggleButton fx:id="paymentToggle" text="Payment" styleClass="btn-primary" selected="true"/>
+                        <ToggleButton fx:id="depositToggle" text="Deposit" styleClass="btn-secondary"/>
+                        <ToggleButton fx:id="refundToggle" text="Refund" styleClass="btn-secondary"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Amount -->
+                <VBox spacing="8">
+                    <Label text="Amount" styleClass="form-label"/>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="\$"/>
+                        <TextField fx:id="amountField" promptText="0.00" prefWidth="150" styleClass="form-field"/>
+                        <Button text="Pay Full Balance" styleClass="btn-small btn-secondary" onAction="#payFullBalance"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Payment method -->
+                <VBox spacing="8">
+                    <Label text="Payment Method" styleClass="form-label"/>
+                    <ComboBox fx:id="paymentMethodCombo" promptText="Select method" prefWidth="200">
+                        <items>
+                            <javafx.collections.FXCollections fx:factory="observableArrayList">
+                                <String fx:value="Cash"/>
+                                <String fx:value="Credit Card"/>
+                                <String fx:value="Debit Card"/>
+                                <String fx:value="Loyalty Points"/>
+                            </javafx.collections.FXCollections>
+                        </items>
+                    </ComboBox>
+                </VBox>
+
+                <!-- Loyalty points option -->
+                <VBox fx:id="loyaltyPointsSection" spacing="8" style="-fx-background-color: #fff3cd; -fx-padding: 10; -fx-background-radius: 5;">
+                    <Label text="Use Loyalty Points" style="-fx-font-weight: bold; -fx-text-fill: #856404;"/>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Available: 2,500 pts" style="-fx-text-fill: #856404;"/>
+                        <Label text="(= \$25.00)" style="-fx-text-fill: #856404;"/>
+                    </HBox>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Use:" style="-fx-text-fill: #856404;"/>
+                        <TextField fx:id="pointsToUseField" promptText="0" prefWidth="80"/>
+                        <Label text="points" style="-fx-text-fill: #856404;"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Reference number (for card payments) -->
+                <VBox spacing="8">
+                    <Label text="Reference # (optional)" styleClass="form-label"/>
+                    <TextField fx:id="referenceField" promptText="Transaction reference" styleClass="form-field"/>
+                </VBox>
+
+                <!-- Notes -->
+                <VBox spacing="8">
+                    <Label text="Notes (optional)" styleClass="form-label"/>
+                    <TextArea fx:id="paymentNotesArea" promptText="Add any notes..." prefHeight="60" styleClass="form-field"/>
+                </VBox>
+
+                <Separator/>
+
+                <!-- Action buttons -->
+                <HBox spacing="10">
+                    <Button text="Process Payment" styleClass="btn-success" HBox.hgrow="ALWAYS" maxWidth="Infinity" onAction="#processPayment"/>
+                </HBox>
+                <Button text="Cancel" styleClass="btn-secondary" maxWidth="Infinity"/>
+
+                <!-- Recent transactions -->
+                <VBox spacing="8">
+                    <Label text="Recent Transactions" style="-fx-font-weight: bold; -fx-font-size: 12px;"/>
+                    <VBox spacing="5" style="-fx-background-color: #f8f9fa; -fx-padding: 10; -fx-background-radius: 5;">
+                        <HBox>
+                            <Label text="Mar 9, 10:15 AM - Deposit" style="-fx-font-size: 11px;" HBox.hgrow="ALWAYS"/>
+                            <Label text="+\$100.00" style="-fx-font-size: 11px; -fx-text-fill: #27ae60;"/>
+                        </HBox>
+                    </VBox>
+                </VBox>
+            </VBox>
+        </HBox>
+    </center>
+</BorderPane>

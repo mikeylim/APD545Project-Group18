@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.hotel.controller.KioskController" styleClass="main-container">
+
+    <!-- Header -->
+    <top>
+        <HBox styleClass="header" alignment="CENTER_LEFT" spacing="20">
+            <Button text="← Main Menu" styleClass="btn-secondary" onAction="#backToMainMenu"/>
+            <VBox HBox.hgrow="ALWAYS">
+                <Label text="NEWNHAM NEXUS" styleClass="header-title"/>
+                <Label text="Step 1 of 6: Number of Guests" styleClass="header-subtitle"/>
+            </VBox>
+            <Button text="Rules &amp; Regulations" styleClass="rules-button" onAction="#showRules"/>
+        </HBox>
+    </top>
+
+    <!-- Step indicator and content -->
+    <center>
+        <VBox alignment="CENTER" spacing="30">
+            <padding><Insets top="30" bottom="30" left="50" right="50"/></padding>
+
+            <!-- Progress indicator -->
+            <HBox alignment="CENTER" spacing="20">
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="1" styleClass="kiosk-step-indicator kiosk-step-indicator-active" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+                    <Label text="Guests" style="-fx-font-size: 12px;"/>
+                </VBox>
+                <Label text="—" style="-fx-text-fill: #bdc3c7;"/>
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="2" styleClass="kiosk-step-indicator" style="-fx-text-fill: white;"/>
+                    <Label text="Dates" style="-fx-font-size: 12px; -fx-text-fill: #bdc3c7;"/>
+                </VBox>
+                <Label text="—" style="-fx-text-fill: #bdc3c7;"/>
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="3" styleClass="kiosk-step-indicator" style="-fx-text-fill: white;"/>
+                    <Label text="Room" style="-fx-font-size: 12px; -fx-text-fill: #bdc3c7;"/>
+                </VBox>
+                <Label text="—" style="-fx-text-fill: #bdc3c7;"/>
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="4" styleClass="kiosk-step-indicator" style="-fx-text-fill: white;"/>
+                    <Label text="Add-ons" style="-fx-font-size: 12px; -fx-text-fill: #bdc3c7;"/>
+                </VBox>
+                <Label text="—" style="-fx-text-fill: #bdc3c7;"/>
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="5" styleClass="kiosk-step-indicator" style="-fx-text-fill: white;"/>
+                    <Label text="Details" style="-fx-font-size: 12px; -fx-text-fill: #bdc3c7;"/>
+                </VBox>
+                <Label text="—" style="-fx-text-fill: #bdc3c7;"/>
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="6" styleClass="kiosk-step-indicator" style="-fx-text-fill: white;"/>
+                    <Label text="Confirm" style="-fx-font-size: 12px; -fx-text-fill: #bdc3c7;"/>
+                </VBox>
+            </HBox>
+
+            <!-- Main content -->
+            <VBox styleClass="card" alignment="CENTER" spacing="40" prefWidth="600">
+                <padding><Insets top="40" right="40" bottom="40" left="40"/></padding>
+
+                <Label text="How many guests will be staying?" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+
+                <!-- Adults -->
+                <HBox alignment="CENTER" spacing="30">
+                    <VBox alignment="CENTER_LEFT" spacing="5" prefWidth="200">
+                        <Label text="Adults" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                        <Label text="Ages 18 and above" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+                    </VBox>
+                    <HBox alignment="CENTER" spacing="15">
+                        <Button text="-" styleClass="btn-secondary" style="-fx-min-width: 50; -fx-min-height: 50; -fx-font-size: 20px;" onAction="#decreaseAdults"/>
+                        <Label fx:id="adultsLabel" text="1" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-min-width: 60; -fx-alignment: center;"/>
+                        <Button text="+" styleClass="btn-primary" style="-fx-min-width: 50; -fx-min-height: 50; -fx-font-size: 20px;" onAction="#increaseAdults"/>
+                    </HBox>
+                </HBox>
+
+                <Separator/>
+
+                <!-- Children -->
+                <HBox alignment="CENTER" spacing="30">
+                    <VBox alignment="CENTER_LEFT" spacing="5" prefWidth="200">
+                        <Label text="Children" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                        <Label text="Ages 0-17" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+                    </VBox>
+                    <HBox alignment="CENTER" spacing="15">
+                        <Button text="-" styleClass="btn-secondary" style="-fx-min-width: 50; -fx-min-height: 50; -fx-font-size: 20px;" onAction="#decreaseChildren"/>
+                        <Label fx:id="childrenLabel" text="0" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-min-width: 60; -fx-alignment: center;"/>
+                        <Button text="+" styleClass="btn-primary" style="-fx-min-width: 50; -fx-min-height: 50; -fx-font-size: 20px;" onAction="#increaseChildren"/>
+                    </HBox>
+                </HBox>
+
+                <!-- Total guests info -->
+                <VBox alignment="CENTER" spacing="5" style="-fx-background-color: #ecf0f1; -fx-background-radius: 8; -fx-padding: 15;">
+                    <Label text="Total Guests" style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;"/>
+                    <Label fx:id="totalGuestsLabel" text="1" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #3498db;"/>
+                </VBox>
+
+                <!-- Error message placeholder -->
+                <Label fx:id="errorLabel" text="" styleClass="error-label"/>
+            </VBox>
+        </VBox>
+    </center>
+
+    <!-- Navigation buttons -->
+    <bottom>
+        <HBox alignment="CENTER" spacing="20">
+            <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+            <Button text="← Back" styleClass="btn-secondary" onAction="#backToWelcome" prefWidth="150" prefHeight="50"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Continue →" styleClass="btn-primary" onAction="#goToDateSelection" prefWidth="150" prefHeight="50"/>
+        </HBox>
+    </bottom>
+</BorderPane>

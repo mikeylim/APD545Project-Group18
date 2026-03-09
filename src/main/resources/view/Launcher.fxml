@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.hotel.controller.LauncherController" styleClass="main-container">
+
+    <center>
+        <VBox alignment="CENTER" spacing="40">
+            <!-- Hotel Logo/Title -->
+            <VBox alignment="CENTER" spacing="10">
+                <Label text="NEWNHAM NEXUS" styleClass="kiosk-welcome-title"/>
+                <Label text="North York's Premier Hospitality Experience" styleClass="kiosk-welcome-subtitle"/>
+                <Label text="Reservation System" style="-fx-font-size: 16px; -fx-text-fill: #95a5a6;"/>
+            </VBox>
+
+            <!-- Mode Selection -->
+            <HBox alignment="CENTER" spacing="40">
+                <!-- Kiosk Mode Card -->
+                <VBox styleClass="card" alignment="CENTER" spacing="15" prefWidth="280" prefHeight="250">
+                    <Label text="KIOSK" style="-fx-font-size: 14px; -fx-text-fill: #3498db; -fx-font-weight: bold;"/>
+                    <Label text="Self-Service" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                    <Label text="For Guests" style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;"/>
+                    <VBox alignment="CENTER_LEFT" spacing="5">
+                        <padding><Insets top="10"/></padding>
+                        <Label text="• Book your room" style="-fx-text-fill: #7f8c8d;"/>
+                        <Label text="• Select add-on services" style="-fx-text-fill: #7f8c8d;"/>
+                        <Label text="• Quick and contactless" style="-fx-text-fill: #7f8c8d;"/>
+                    </VBox>
+                    <Region VBox.vgrow="ALWAYS"/>
+                    <Button text="Start Booking" styleClass="btn-primary btn-large" onAction="#openKiosk" prefWidth="200"/>
+                </VBox>
+
+                <!-- Admin Mode Card -->
+                <VBox styleClass="card" alignment="CENTER" spacing="15" prefWidth="280" prefHeight="250">
+                    <Label text="ADMIN" style="-fx-font-size: 14px; -fx-text-fill: #e74c3c; -fx-font-weight: bold;"/>
+                    <Label text="Staff Portal" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                    <Label text="For Administrators" style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;"/>
+                    <VBox alignment="CENTER_LEFT" spacing="5">
+                        <padding><Insets top="10"/></padding>
+                        <Label text="• Manage reservations" style="-fx-text-fill: #7f8c8d;"/>
+                        <Label text="• Process payments" style="-fx-text-fill: #7f8c8d;"/>
+                        <Label text="• View reports" style="-fx-text-fill: #7f8c8d;"/>
+                    </VBox>
+                    <Region VBox.vgrow="ALWAYS"/>
+                    <Button text="Admin Login" styleClass="btn-secondary btn-large" onAction="#openAdminLogin" prefWidth="200"/>
+                </VBox>
+
+                <!-- Feedback Mode Card -->
+                <VBox styleClass="card" alignment="CENTER" spacing="15" prefWidth="280" prefHeight="250">
+                    <Label text="FEEDBACK" style="-fx-font-size: 14px; -fx-text-fill: #27ae60; -fx-font-weight: bold;"/>
+                    <Label text="Share Experience" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                    <Label text="For Checked-Out Guests" style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;"/>
+                    <VBox alignment="CENTER_LEFT" spacing="5">
+                        <padding><Insets top="10"/></padding>
+                        <Label text="• Rate your stay" style="-fx-text-fill: #7f8c8d;"/>
+                        <Label text="• Leave comments" style="-fx-text-fill: #7f8c8d;"/>
+                        <Label text="• Help us improve" style="-fx-text-fill: #7f8c8d;"/>
+                    </VBox>
+                    <Region VBox.vgrow="ALWAYS"/>
+                    <Button text="Give Feedback" styleClass="btn-success btn-large" onAction="#openFeedback" prefWidth="200"/>
+                </VBox>
+            </HBox>
+
+            <!-- Footer -->
+            <Label text="© 2026 NewnhamNexus. All rights reserved." style="-fx-font-size: 12px; -fx-text-fill: #bdc3c7;"/>
+        </VBox>
+    </center>
+</BorderPane>

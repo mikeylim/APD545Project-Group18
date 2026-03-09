@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.hotel.controller.KioskController" styleClass="main-container">
+
+    <!-- Header -->
+    <top>
+        <HBox styleClass="header" alignment="CENTER_LEFT" spacing="20">
+            <Button text="← Main Menu" styleClass="btn-secondary" onAction="#backToMainMenu"/>
+            <VBox HBox.hgrow="ALWAYS">
+                <Label text="NEWNHAM NEXUS" styleClass="header-title"/>
+                <Label text="Step 2 of 6: Select Your Dates" styleClass="header-subtitle"/>
+            </VBox>
+            <Button text="Rules &amp; Regulations" styleClass="rules-button" onAction="#showRules"/>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox alignment="CENTER" spacing="30">
+            <padding><Insets top="30" bottom="30" left="50" right="50"/></padding>
+
+            <!-- Progress indicator -->
+            <HBox alignment="CENTER" spacing="20">
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="✓" styleClass="kiosk-step-indicator kiosk-step-indicator-completed" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+                    <Label text="Guests" style="-fx-font-size: 12px;"/>
+                </VBox>
+                <Label text="—" style="-fx-text-fill: #27ae60;"/>
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="2" styleClass="kiosk-step-indicator kiosk-step-indicator-active" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+                    <Label text="Dates" style="-fx-font-size: 12px;"/>
+                </VBox>
+                <Label text="—" style="-fx-text-fill: #bdc3c7;"/>
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="3" styleClass="kiosk-step-indicator" style="-fx-text-fill: white;"/>
+                    <Label text="Room" style="-fx-font-size: 12px; -fx-text-fill: #bdc3c7;"/>
+                </VBox>
+                <Label text="—" style="-fx-text-fill: #bdc3c7;"/>
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="4" styleClass="kiosk-step-indicator" style="-fx-text-fill: white;"/>
+                    <Label text="Add-ons" style="-fx-font-size: 12px; -fx-text-fill: #bdc3c7;"/>
+                </VBox>
+                <Label text="—" style="-fx-text-fill: #bdc3c7;"/>
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="5" styleClass="kiosk-step-indicator" style="-fx-text-fill: white;"/>
+                    <Label text="Details" style="-fx-font-size: 12px; -fx-text-fill: #bdc3c7;"/>
+                </VBox>
+                <Label text="—" style="-fx-text-fill: #bdc3c7;"/>
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="6" styleClass="kiosk-step-indicator" style="-fx-text-fill: white;"/>
+                    <Label text="Confirm" style="-fx-font-size: 12px; -fx-text-fill: #bdc3c7;"/>
+                </VBox>
+            </HBox>
+
+            <!-- Main content -->
+            <VBox styleClass="card" alignment="CENTER" spacing="30" prefWidth="700">
+                <padding><Insets top="40" right="40" bottom="40" left="40"/></padding>
+
+                <Label text="When would you like to stay?" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+
+                <HBox alignment="CENTER" spacing="50">
+                    <!-- Check-in -->
+                    <VBox alignment="CENTER" spacing="15">
+                        <Label text="Check-in Date" styleClass="form-label"/>
+                        <DatePicker fx:id="checkInPicker" prefWidth="200" styleClass="form-field"/>
+                        <Label text="Check-in time: 3:00 PM" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+                        <Label fx:id="checkInError" text="" styleClass="error-label"/>
+                    </VBox>
+
+                    <Label text="→" style="-fx-font-size: 40px; -fx-text-fill: #3498db;"/>
+
+                    <!-- Check-out -->
+                    <VBox alignment="CENTER" spacing="15">
+                        <Label text="Check-out Date" styleClass="form-label"/>
+                        <DatePicker fx:id="checkOutPicker" prefWidth="200" styleClass="form-field"/>
+                        <Label text="Check-out time: 11:00 AM" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+                        <Label fx:id="checkOutError" text="" styleClass="error-label"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Stay duration info -->
+                <VBox alignment="CENTER" spacing="10" style="-fx-background-color: #ecf0f1; -fx-background-radius: 8; -fx-padding: 20;">
+                    <HBox alignment="CENTER" spacing="30">
+                        <VBox alignment="CENTER">
+                            <Label text="Number of Nights" style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;"/>
+                            <Label fx:id="nightsLabel" text="1" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #3498db;"/>
+                        </VBox>
+                        <Separator orientation="VERTICAL"/>
+                        <VBox alignment="CENTER">
+                            <Label text="Guests" style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;"/>
+                            <Label fx:id="guestsSummaryLabel" text="2 Adults, 0 Children" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <!-- Validation message -->
+                <Label fx:id="dateValidationLabel" text="" styleClass="error-label"/>
+
+                <!-- Pricing note -->
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="Note: Weekend rates (Fri-Sat) may differ from weekday rates." style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d; -fx-font-style: italic;"/>
+                    <Label text="Seasonal pricing may also apply during peak periods." style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d; -fx-font-style: italic;"/>
+                </VBox>
+            </VBox>
+        </VBox>
+    </center>
+
+    <!-- Navigation -->
+    <bottom>
+        <HBox alignment="CENTER" spacing="20">
+            <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+            <Button text="← Back" styleClass="btn-secondary" onAction="#backToGuestCount" prefWidth="150" prefHeight="50"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Continue →" styleClass="btn-primary" onAction="#goToRoomSelection" prefWidth="150" prefHeight="50"/>
+        </HBox>
+    </bottom>
+</BorderPane>

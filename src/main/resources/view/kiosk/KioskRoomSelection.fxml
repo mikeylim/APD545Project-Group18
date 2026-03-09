@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.hotel.controller.KioskController" styleClass="main-container">
+
+    <!-- Header -->
+    <top>
+        <HBox styleClass="header" alignment="CENTER_LEFT" spacing="20">
+            <Button text="← Main Menu" styleClass="btn-secondary" onAction="#backToMainMenu"/>
+            <VBox HBox.hgrow="ALWAYS">
+                <Label text="NEWNHAM NEXUS" styleClass="header-title"/>
+                <Label text="Step 3 of 6: Select Your Room" styleClass="header-subtitle"/>
+            </VBox>
+            <Button text="Rules &amp; Regulations" styleClass="rules-button" onAction="#showRules"/>
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <VBox alignment="CENTER" spacing="20">
+                <padding><Insets top="20" bottom="20" left="40" right="40"/></padding>
+
+                <!-- Progress indicator -->
+                <HBox alignment="CENTER" spacing="20">
+                    <VBox alignment="CENTER" spacing="5">
+                        <Label text="✓" styleClass="kiosk-step-indicator kiosk-step-indicator-completed" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+                        <Label text="Guests" style="-fx-font-size: 12px;"/>
+                    </VBox>
+                    <Label text="—" style="-fx-text-fill: #27ae60;"/>
+                    <VBox alignment="CENTER" spacing="5">
+                        <Label text="✓" styleClass="kiosk-step-indicator kiosk-step-indicator-completed" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+                        <Label text="Dates" style="-fx-font-size: 12px;"/>
+                    </VBox>
+                    <Label text="—" style="-fx-text-fill: #27ae60;"/>
+                    <VBox alignment="CENTER" spacing="5">
+                        <Label text="3" styleClass="kiosk-step-indicator kiosk-step-indicator-active" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+                        <Label text="Room" style="-fx-font-size: 12px;"/>
+                    </VBox>
+                    <Label text="—" style="-fx-text-fill: #bdc3c7;"/>
+                    <VBox alignment="CENTER" spacing="5">
+                        <Label text="4" styleClass="kiosk-step-indicator" style="-fx-text-fill: white;"/>
+                        <Label text="Add-ons" style="-fx-font-size: 12px; -fx-text-fill: #bdc3c7;"/>
+                    </VBox>
+                    <Label text="—" style="-fx-text-fill: #bdc3c7;"/>
+                    <VBox alignment="CENTER" spacing="5">
+                        <Label text="5" styleClass="kiosk-step-indicator" style="-fx-text-fill: white;"/>
+                        <Label text="Details" style="-fx-font-size: 12px; -fx-text-fill: #bdc3c7;"/>
+                    </VBox>
+                    <Label text="—" style="-fx-text-fill: #bdc3c7;"/>
+                    <VBox alignment="CENTER" spacing="5">
+                        <Label text="6" styleClass="kiosk-step-indicator" style="-fx-text-fill: white;"/>
+                        <Label text="Confirm" style="-fx-font-size: 12px; -fx-text-fill: #bdc3c7;"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Booking summary bar -->
+                <HBox styleClass="card" alignment="CENTER" spacing="30" style="-fx-padding: 15;">
+                    <Label text="Guests:" style="-fx-font-weight: bold;"/>
+                    <Label fx:id="guestsInfo" text="2 Adults, 0 Children"/>
+                    <Separator orientation="VERTICAL"/>
+                    <Label text="Dates:" style="-fx-font-weight: bold;"/>
+                    <Label fx:id="datesInfo" text="Mar 15 - Mar 17, 2026"/>
+                    <Separator orientation="VERTICAL"/>
+                    <Label text="Nights:" style="-fx-font-weight: bold;"/>
+                    <Label fx:id="nightsInfo" text="2"/>
+                </HBox>
+
+                <!-- Suggestion or custom selection toggle -->
+                <HBox alignment="CENTER" spacing="20">
+                    <ToggleButton fx:id="suggestedToggle" text="Use Suggested Room Plan" styleClass="btn-primary" selected="true"/>
+                    <ToggleButton fx:id="customToggle" text="Choose My Own Rooms" styleClass="btn-secondary"/>
+                </HBox>
+
+                <!-- Suggested room plan section -->
+                <VBox fx:id="suggestedSection" styleClass="card" spacing="20" prefWidth="800">
+                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                    <Label text="Recommended Room Plan" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                    <Label text="Based on your group size, we recommend:" style="-fx-text-fill: #7f8c8d;"/>
+
+                    <!-- Suggested room card -->
+                    <HBox styleClass="room-card room-card-selected" spacing="20" alignment="CENTER_LEFT">
+                        <VBox spacing="5" HBox.hgrow="ALWAYS">
+                            <Label text="1 × Double Room" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                            <Label text="Perfect for up to 4 guests" style="-fx-text-fill: #7f8c8d;"/>
+                            <HBox spacing="10">
+                                <Label text="✓ King bed or 2 Queen beds" style="-fx-text-fill: #27ae60; -fx-font-size: 12px;"/>
+                                <Label text="✓ City view" style="-fx-text-fill: #27ae60; -fx-font-size: 12px;"/>
+                                <Label text="✓ 400 sq ft" style="-fx-text-fill: #27ae60; -fx-font-size: 12px;"/>
+                            </HBox>
+                        </VBox>
+                        <VBox alignment="CENTER_RIGHT" spacing="5">
+                            <Label text="\$150" styleClass="price-tag"/>
+                            <Label text="per night" styleClass="price-label"/>
+                        </VBox>
+                    </HBox>
+
+                    <Label text="Total for 2 nights: $300.00" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                </VBox>
+
+                <!-- Custom room selection section -->
+                <VBox fx:id="customSection" styleClass="card" spacing="20" prefWidth="800" visible="false" managed="false">
+                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="Choose Your Rooms" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="View Room Policies" styleClass="btn-small btn-secondary" onAction="#showRoomPolicies"/>
+                    </HBox>
+
+                    <Label text="Note: Please check the room booking policies to ensure your selection meets occupancy requirements." style="-fx-text-fill: #f39c12; -fx-font-size: 12px;"/>
+
+                    <!-- Room type cards -->
+                    <VBox spacing="15">
+                        <!-- Single Room -->
+                        <HBox styleClass="room-card" spacing="20" alignment="CENTER_LEFT">
+                            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                <Label text="Single Room" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                                <Label text="Up to 2 guests" style="-fx-text-fill: #7f8c8d;"/>
+                                <HBox spacing="10">
+                                    <Label text="• 1 Queen bed" style="-fx-font-size: 12px;"/>
+                                    <Label text="• 250 sq ft" style="-fx-font-size: 12px;"/>
+                                </HBox>
+                                <Label text="Available: 15 rooms" style="-fx-text-fill: #27ae60; -fx-font-size: 12px;"/>
+                            </VBox>
+                            <VBox alignment="CENTER" spacing="5">
+                                <Label text="\$100" styleClass="price-tag"/>
+                                <Label text="per night" styleClass="price-label"/>
+                            </VBox>
+                            <VBox alignment="CENTER" spacing="5">
+                                <Label text="Quantity" style="-fx-font-size: 12px;"/>
+                                <HBox spacing="10" alignment="CENTER">
+                                    <Button text="-" styleClass="btn-small btn-secondary"/>
+                                    <Label text="0" style="-fx-font-weight: bold; -fx-min-width: 30; -fx-alignment: center;"/>
+                                    <Button text="+" styleClass="btn-small btn-primary"/>
+                                </HBox>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Double Room -->
+                        <HBox styleClass="room-card" spacing="20" alignment="CENTER_LEFT">
+                            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                <Label text="Double Room" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                                <Label text="Up to 4 guests" style="-fx-text-fill: #7f8c8d;"/>
+                                <HBox spacing="10">
+                                    <Label text="• King or 2 Queens" style="-fx-font-size: 12px;"/>
+                                    <Label text="• 400 sq ft" style="-fx-font-size: 12px;"/>
+                                </HBox>
+                                <Label text="Available: 10 rooms" style="-fx-text-fill: #27ae60; -fx-font-size: 12px;"/>
+                            </VBox>
+                            <VBox alignment="CENTER" spacing="5">
+                                <Label text="\$150" styleClass="price-tag"/>
+                                <Label text="per night" styleClass="price-label"/>
+                            </VBox>
+                            <VBox alignment="CENTER" spacing="5">
+                                <Label text="Quantity" style="-fx-font-size: 12px;"/>
+                                <HBox spacing="10" alignment="CENTER">
+                                    <Button text="-" styleClass="btn-small btn-secondary"/>
+                                    <Label text="0" style="-fx-font-weight: bold; -fx-min-width: 30; -fx-alignment: center;"/>
+                                    <Button text="+" styleClass="btn-small btn-primary"/>
+                                </HBox>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Deluxe Room -->
+                        <HBox styleClass="room-card" spacing="20" alignment="CENTER_LEFT">
+                            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                <Label text="Deluxe Room" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                                <Label text="Up to 2 guests" style="-fx-text-fill: #7f8c8d;"/>
+                                <HBox spacing="10">
+                                    <Label text="• King bed" style="-fx-font-size: 12px;"/>
+                                    <Label text="• Lake view" style="-fx-font-size: 12px;"/>
+                                    <Label text="• 500 sq ft" style="-fx-font-size: 12px;"/>
+                                </HBox>
+                                <Label text="Available: 5 rooms" style="-fx-text-fill: #f39c12; -fx-font-size: 12px;"/>
+                            </VBox>
+                            <VBox alignment="CENTER" spacing="5">
+                                <Label text="\$250" styleClass="price-tag"/>
+                                <Label text="per night" styleClass="price-label"/>
+                            </VBox>
+                            <VBox alignment="CENTER" spacing="5">
+                                <Label text="Quantity" style="-fx-font-size: 12px;"/>
+                                <HBox spacing="10" alignment="CENTER">
+                                    <Button text="-" styleClass="btn-small btn-secondary"/>
+                                    <Label text="0" style="-fx-font-weight: bold; -fx-min-width: 30; -fx-alignment: center;"/>
+                                    <Button text="+" styleClass="btn-small btn-primary"/>
+                                </HBox>
+                            </VBox>
+                        </HBox>
+
+                        <!-- Penthouse -->
+                        <HBox styleClass="room-card" spacing="20" alignment="CENTER_LEFT">
+                            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                <Label text="Penthouse Suite" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                                <Label text="Up to 2 guests" style="-fx-text-fill: #7f8c8d;"/>
+                                <HBox spacing="10">
+                                    <Label text="• King bed" style="-fx-font-size: 12px;"/>
+                                    <Label text="• Panoramic view" style="-fx-font-size: 12px;"/>
+                                    <Label text="• 800 sq ft" style="-fx-font-size: 12px;"/>
+                                </HBox>
+                                <Label text="Available: 2 rooms" style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;"/>
+                            </VBox>
+                            <VBox alignment="CENTER" spacing="5">
+                                <Label text="\$500" styleClass="price-tag"/>
+                                <Label text="per night" styleClass="price-label"/>
+                            </VBox>
+                            <VBox alignment="CENTER" spacing="5">
+                                <Label text="Quantity" style="-fx-font-size: 12px;"/>
+                                <HBox spacing="10" alignment="CENTER">
+                                    <Button text="-" styleClass="btn-small btn-secondary"/>
+                                    <Label text="0" style="-fx-font-weight: bold; -fx-min-width: 30; -fx-alignment: center;"/>
+                                    <Button text="+" styleClass="btn-small btn-primary"/>
+                                </HBox>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Validation message -->
+                    <Label fx:id="roomValidationLabel" text="" styleClass="error-label"/>
+
+                    <!-- Selection summary -->
+                    <HBox alignment="CENTER_RIGHT" spacing="20" style="-fx-background-color: #ecf0f1; -fx-padding: 15; -fx-background-radius: 5;">
+                        <Label text="Total Capacity: 0 guests" style="-fx-text-fill: #7f8c8d;"/>
+                        <Separator orientation="VERTICAL"/>
+                        <Label text="Required: 2 guests" style="-fx-text-fill: #7f8c8d;"/>
+                        <Separator orientation="VERTICAL"/>
+                        <Label text="Subtotal:" style="-fx-font-weight: bold;"/>
+                        <Label text="\$0.00" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #27ae60;"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <!-- Navigation -->
+    <bottom>
+        <HBox alignment="CENTER" spacing="20">
+            <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+            <Button text="← Back" styleClass="btn-secondary" onAction="#backToDateSelection" prefWidth="150" prefHeight="50"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Continue →" styleClass="btn-primary" onAction="#goToAddOns" prefWidth="150" prefHeight="50"/>
+        </HBox>
+    </bottom>
+</BorderPane>

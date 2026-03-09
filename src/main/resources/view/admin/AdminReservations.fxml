@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import java.lang.String?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.hotel.controller.AdminController" styleClass="main-container" style="-fx-padding: 0;">
+
+    <!-- Sidebar (same as dashboard) -->
+    <left>
+        <VBox styleClass="sidebar" spacing="0">
+            <VBox alignment="CENTER" spacing="5" style="-fx-padding: 20; -fx-border-color: transparent transparent #34495e transparent;">
+                <Label text="NEWNHAM NEXUS" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                <Label text="HOTEL" style="-fx-font-size: 14px; -fx-text-fill: #bdc3c7;"/>
+            </VBox>
+            <VBox alignment="CENTER" spacing="3" style="-fx-padding: 15; -fx-background-color: #34495e;">
+                <Label fx:id="userNameLabel" text="John Admin" style="-fx-font-weight: bold; -fx-text-fill: white;"/>
+                <Label fx:id="userRoleLabel" text="Administrator" style="-fx-font-size: 11px; -fx-text-fill: #3498db;"/>
+            </VBox>
+            <VBox spacing="0" VBox.vgrow="ALWAYS">
+                <Button text="Dashboard" styleClass="sidebar-item" onAction="#showDashboard" maxWidth="Infinity"/>
+                <Button text="Reservations" styleClass="sidebar-item sidebar-item-active" onAction="#showReservations" maxWidth="Infinity"/>
+                <Button text="Guests" styleClass="sidebar-item" onAction="#showGuests" maxWidth="Infinity"/>
+                <Button text="Payments" styleClass="sidebar-item" onAction="#showPayments" maxWidth="Infinity"/>
+                <Button text="Check-out" styleClass="sidebar-item" onAction="#showCheckout" maxWidth="Infinity"/>
+                <Button text="Waitlist" styleClass="sidebar-item" onAction="#showWaitlist" maxWidth="Infinity"/>
+                <Button text="Feedback" styleClass="sidebar-item" onAction="#showFeedbackManagement" maxWidth="Infinity"/>
+                <Button text="Loyalty" styleClass="sidebar-item" onAction="#showLoyalty" maxWidth="Infinity"/>
+                <Button text="Reports" styleClass="sidebar-item" onAction="#showReports" maxWidth="Infinity"/>
+            </VBox>
+            <Button text="Logout" styleClass="sidebar-item" style="-fx-background-color: #c0392b;" onAction="#handleLogout" maxWidth="Infinity"/>
+        </VBox>
+    </left>
+
+    <!-- Main content -->
+    <center>
+        <VBox spacing="20">
+            <padding><Insets top="25" right="25" bottom="25" left="25"/></padding>
+
+            <!-- Header -->
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <VBox HBox.hgrow="ALWAYS">
+                    <Label text="Reservation Management" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                    <Label text="Create, modify, and manage reservations" style="-fx-text-fill: #7f8c8d;"/>
+                </VBox>
+                <Button text="+ New Reservation" styleClass="btn-primary" onAction="#newReservation"/>
+            </HBox>
+
+            <!-- Search and filters -->
+            <HBox styleClass="card" spacing="15" alignment="CENTER_LEFT">
+                <TextField fx:id="searchField" promptText="Search by name, phone, or confirmation #" prefWidth="300" styleClass="search-bar"/>
+                <ComboBox fx:id="statusFilter" promptText="Status" prefWidth="150">
+                    <items>
+                        <javafx.collections.FXCollections fx:factory="observableArrayList">
+                            <String fx:value="All Statuses"/>
+                            <String fx:value="Confirmed"/>
+                            <String fx:value="Checked In"/>
+                            <String fx:value="Checked Out"/>
+                            <String fx:value="Cancelled"/>
+                        </javafx.collections.FXCollections>
+                    </items>
+                </ComboBox>
+                <DatePicker fx:id="fromDateFilter" promptText="From Date"/>
+                <DatePicker fx:id="toDateFilter" promptText="To Date"/>
+                <Button text="Search" styleClass="btn-primary" onAction="#searchReservations"/>
+                <Button text="Clear" styleClass="btn-secondary" onAction="#clearFilters"/>
+            </HBox>
+
+            <!-- Reservations table -->
+            <VBox styleClass="card" spacing="15" VBox.vgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT">
+                    <Label text="Reservations" style="-fx-font-size: 16px; -fx-font-weight: bold;" HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="resultCountLabel" text="Showing 25 results" style="-fx-text-fill: #7f8c8d;"/>
+                </HBox>
+
+                <TableView fx:id="reservationsTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn text="Conf. #" prefWidth="120"/>
+                        <TableColumn text="Guest Name" prefWidth="150"/>
+                        <TableColumn text="Phone" prefWidth="120"/>
+                        <TableColumn text="Room(s)" prefWidth="100"/>
+                        <TableColumn text="Check-in" prefWidth="100"/>
+                        <TableColumn text="Check-out" prefWidth="100"/>
+                        <TableColumn text="Total" prefWidth="80"/>
+                        <TableColumn text="Status" prefWidth="100"/>
+                        <TableColumn text="Actions" prefWidth="120"/>
+                    </columns>
+                    <placeholder>
+                        <Label text="No reservations found. Try adjusting your search criteria."/>
+                    </placeholder>
+                </TableView>
+
+                <!-- Pagination -->
+                <HBox alignment="CENTER" spacing="10">
+                    <Button text="← Previous" styleClass="btn-small btn-secondary"/>
+                    <Label text="Page 1 of 5"/>
+                    <Button text="Next →" styleClass="btn-small btn-secondary"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </center>
+
+    <!-- Detail panel (shown when a reservation is selected) -->
+    <right>
+        <VBox styleClass="card" spacing="15" prefWidth="350" style="-fx-background-color: #f8f9fa;">
+            <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+            <HBox alignment="CENTER_LEFT">
+                <Label text="Reservation Details" style="-fx-font-size: 16px; -fx-font-weight: bold;" HBox.hgrow="ALWAYS"/>
+                <Button text="×" styleClass="btn-small" style="-fx-background-color: transparent;"/>
+            </HBox>
+
+            <Separator/>
+
+            <Label text="NNX-2026030901" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #3498db;"/>
+
+            <GridPane hgap="10" vgap="8">
+                <Label text="Guest:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <Label text="John Smith" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                <Label text="Phone:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <Label text="+1 (416) 555-0123" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                <Label text="Email:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <Label text="john@email.com" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                <Label text="Room:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                <Label text="1 × Double (#205)" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                <Label text="Dates:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                <Label text="Mar 15-17, 2026" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+                <Label text="Guests:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+                <Label text="2 Adults" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+
+                <Label text="Status:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+                <Label text="Confirmed" style="-fx-text-fill: #27ae60; -fx-font-weight: bold;" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+            </GridPane>
+
+            <Separator/>
+
+            <Label text="Billing Summary" style="-fx-font-weight: bold;"/>
+            <VBox spacing="5">
+                <HBox>
+                    <Label text="Room charges" HBox.hgrow="ALWAYS"/>
+                    <Label text="\$300.00"/>
+                </HBox>
+                <HBox>
+                    <Label text="Add-ons" HBox.hgrow="ALWAYS"/>
+                    <Label text="\$110.00"/>
+                </HBox>
+                <HBox>
+                    <Label text="Tax (13\%)" HBox.hgrow="ALWAYS"/>
+                    <Label text="\$53.30"/>
+                </HBox>
+                <Separator/>
+                <HBox>
+                    <Label text="Total" style="-fx-font-weight: bold;" HBox.hgrow="ALWAYS"/>
+                    <Label text="\$463.30" style="-fx-font-weight: bold;"/>
+                </HBox>
+                <HBox>
+                    <Label text="Paid" style="-fx-text-fill: #27ae60;" HBox.hgrow="ALWAYS"/>
+                    <Label text="\$100.00" style="-fx-text-fill: #27ae60;"/>
+                </HBox>
+                <HBox>
+                    <Label text="Balance" style="-fx-font-weight: bold; -fx-text-fill: #e74c3c;" HBox.hgrow="ALWAYS"/>
+                    <Label text="\$363.30" style="-fx-font-weight: bold; -fx-text-fill: #e74c3c;"/>
+                </HBox>
+            </VBox>
+
+            <Separator/>
+
+            <!-- Actions -->
+            <VBox spacing="10">
+                <Button text="Modify Reservation" styleClass="btn-primary" maxWidth="Infinity"/>
+                <Button text="Process Payment" styleClass="btn-success" maxWidth="Infinity"/>
+                <Button text="Apply Discount" styleClass="btn-secondary" maxWidth="Infinity"/>
+                <Button text="Cancel Reservation" styleClass="btn-danger" maxWidth="Infinity"/>
+            </VBox>
+        </VBox>
+    </right>
+</BorderPane>

@@ -1,0 +1,95 @@
+# ===========================
+# NewnhamNexus Project .gitignore
+# ===========================
+
+### Compiled class files ###
+*.class
+
+### Package files ###
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+### Build directories ###
+out/
+build/
+target/
+bin/
+!**/src/main/**/out/
+!**/src/test/**/out/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+.idea/
+*.iml
+*.ipr
+*.iws
+.idea_modules/
+.kotlin
+
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
+.metadata/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+### macOS ###
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+### Windows ###
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+### Linux ###
+*~
+.directory
+
+### Log files ###
+*.log
+
+### Temporary files ###
+*.tmp
+*.temp
+*.swp
+*.swo
+
+### JavaFX SDK (local installation) ###
+# Each developer has their own path - don't commit
+javafx-sdk*/
+
+### Database files (if using SQLite) ###
+*.db
+*.sqlite
+*.sqlite3
+
+### Crash reports ###
+hs_err_pid*
+
+### Backup files ###
+*.bak
+*.backup
+
+### Claude Code (local settings) ###
+.claude/
