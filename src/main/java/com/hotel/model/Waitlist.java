@@ -1,44 +1,114 @@
 package com.hotel.model;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-
+import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "waitlist")
 public class Waitlist {
-    private final Guest guest;
-    private final RoomType roomType;
-    private final ObjectProperty<LocalDate> startDate = new SimpleObjectProperty<>();
-    private final ObjectProperty<LocalDate> endDate = new SimpleObjectProperty<>();
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    public Waitlist(Guest guest, RoomType roomType, LocalDate startDate, LocalDate endDate) {
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "guest_id", nullable = false)
+    private Guest guest;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private RoomType roomType;
+
+    @Column(nullable = false)
+    private LocalDate desiredCheckIn;
+
+    @Column(nullable = false)
+    private LocalDate desiredCheckOut;
+
+    @Column
+    private LocalDateTime createdAt;
+
+    @Column
+    private boolean notified = false;
+
+    @Column
+    private boolean converted = false; // Converted to reservation
+
+    // Default constructor required by JPA
+    public Waitlist() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public Waitlist(Guest guest, RoomType roomType, LocalDate desiredCheckIn, LocalDate desiredCheckOut) {
+        this();
         this.guest = guest;
         this.roomType = roomType;
-        this.startDate.set(startDate);
-        this.endDate.set(endDate);
+        this.desiredCheckIn = desiredCheckIn;
+        this.desiredCheckOut = desiredCheckOut;
+    }
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Guest getGuest() {
         return guest;
     }
 
+    public void setGuest(Guest guest) {
+        this.guest = guest;
+    }
+
     public RoomType getRoomType() {
         return roomType;
     }
 
-    public LocalDate getStartDate() {
-        return startDate.getValue();
+    public void setRoomType(RoomType roomType) {
+        this.roomType = roomType;
     }
 
-    public ObjectProperty<LocalDate> getStartDateProperty() {
-        return startDate;
+    public LocalDate getDesiredCheckIn() {
+        return desiredCheckIn;
     }
 
-    public LocalDate getEndDate() {
-        return endDate.getValue();
+    public void setDesiredCheckIn(LocalDate desiredCheckIn) {
+        this.desiredCheckIn = desiredCheckIn;
     }
 
-    public ObjectProperty<LocalDate> getEndDateProperty() {
-        return endDate;
+    public LocalDate getDesiredCheckOut() {
+        return desiredCheckOut;
+    }
+
+    public void setDesiredCheckOut(LocalDate desiredCheckOut) {
+        this.desiredCheckOut = desiredCheckOut;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public boolean isNotified() {
+        return notified;
+    }
+
+    public void setNotified(boolean notified) {
+        this.notified = notified;
+    }
+
+    public boolean isConverted() {
+        return converted;
+    }
+
+    public void setConverted(boolean converted) {
+        this.converted = converted;
     }
 }

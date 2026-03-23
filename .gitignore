@@ -79,10 +79,13 @@ Desktop.ini
 # Each developer has their own path - don't commit
 javafx-sdk*/
 
-### Database files (if using SQLite) ###
+### Database files ###
 *.db
 *.sqlite
 *.sqlite3
+data/
+*.mv.db
+*.trace.db
 
 ### Crash reports ###
 hs_err_pid*

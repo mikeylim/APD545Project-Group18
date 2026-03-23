@@ -1,60 +1,100 @@
 package com.hotel.model;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "guests")
 public class Guest {
-    private final StringProperty firstName = new SimpleStringProperty();
-    private final StringProperty lastName = new SimpleStringProperty();
-    private final StringProperty email = new SimpleStringProperty();
-    private final StringProperty phone = new SimpleStringProperty();
-    private final StringProperty confirmationNumber = new SimpleStringProperty();
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    public Guest(String firstName, String lastName, String email, String phone, String confirmationNumber) {
-        this.firstName.set(firstName);
-        this.lastName.set(lastName);
-        this.email.set(email);
-        this.phone.set(phone);
-        this.confirmationNumber.set(confirmationNumber);
+    @Column(nullable = false)
+    private String firstName;
+
+    @Column(nullable = false)
+    private String lastName;
+
+    @Column(nullable = false)
+    private String email;
+
+    @Column(nullable = false)
+    private String phone;
+
+    @Column(unique = true)
+    private String loyaltyNumber;
+
+    @Column
+    private int loyaltyPoints = 0;
+
+    // Default constructor required by JPA
+    public Guest() {}
+
+    public Guest(String firstName, String lastName, String email, String phone) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phone = phone;
+    }
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getFirstName() {
-        return firstName.get();
-    }
-
-    public StringProperty getFirstNameProperty() {
         return firstName;
     }
 
-    public String getLastName() {
-        return lastName.get();
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public StringProperty getLastNameProperty() {
+    public String getLastName() {
         return lastName;
     }
 
-    public String getEmail() {
-        return email.get();
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
-    public StringProperty getEmailProperty() {
+    public String getEmail() {
         return email;
     }
 
-    public String getPhone() {
-        return phone.get();
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public StringProperty getPhoneProperty() {
+    public String getPhone() {
         return phone;
     }
 
-    public String getConfirmationNumber() {
-        return confirmationNumber.get();
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
-    public StringProperty getConfirmationNumberProperty() {
-        return confirmationNumber;
+    public String getLoyaltyNumber() {
+        return loyaltyNumber;
+    }
+
+    public void setLoyaltyNumber(String loyaltyNumber) {
+        this.loyaltyNumber = loyaltyNumber;
+    }
+
+    public int getLoyaltyPoints() {
+        return loyaltyPoints;
+    }
+
+    public void setLoyaltyPoints(int loyaltyPoints) {
+        this.loyaltyPoints = loyaltyPoints;
+    }
+
+    public String getFullName() {
+        return firstName + " " + lastName;
     }
 }

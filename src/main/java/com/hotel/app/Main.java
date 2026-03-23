@@ -15,6 +15,20 @@ public class Main extends Application {
     private static Stage primaryStage;
 
     @Override
+    public void init() {
+        // Initialize database with seed data
+        System.out.println("Initializing database...");
+        try {
+            DatabaseInitializer initializer = new DatabaseInitializer();
+            initializer.initialize();
+            System.out.println("Database initialization complete.");
+        } catch (Exception e) {
+            System.err.println("Error initializing database: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public void start(Stage stage) throws Exception {
         primaryStage = stage;
 
@@ -29,6 +43,14 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.setResizable(true);
         stage.show();
+    }
+
+    @Override
+    public void stop() {
+        // Close EntityManagerFactory on application shutdown
+        System.out.println("Shutting down...");
+        EntityManagerFactoryProvider.close();
+        System.out.println("Application closed.");
     }
 
     public static Stage getPrimaryStage() {

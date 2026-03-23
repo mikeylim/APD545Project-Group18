@@ -1,5 +1,10 @@
 package com.hotel.model;
 
 public enum ReservationStatus {
-    Confirmed, Pending, CheckedIn, CheckedOut, Cancelled, NoShow
+    PENDING,
+    CONFIRMED,
+    CHECKED_IN,
+    CHECKED_OUT,
+    CANCELLED,
+    NO_SHOW
 }

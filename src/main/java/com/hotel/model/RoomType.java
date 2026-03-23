@@ -1,39 +1,38 @@
 package com.hotel.model;
 
-import javafx.beans.property.*;
+/**
+ * Room types with their base prices and capacities.
+ * Based on business rules:
+ * - Single: up to 2 people
+ * - Double: up to 4 people
+ * - Deluxe: up to 2 people (higher price)
+ * - Penthouse: up to 2 people (highest price)
+ */
+public enum RoomType {
+    SINGLE("Single Room", 100.00, 2),
+    DOUBLE("Double Room", 150.00, 4),
+    DELUXE("Deluxe Room", 200.00, 2),
+    PENTHOUSE("Penthouse Suite", 350.00, 2);
 
-public class RoomType {
-    private final StringProperty name = new SimpleStringProperty();
-    private final DoubleProperty price = new SimpleDoubleProperty();
-    private final IntegerProperty capacity = new SimpleIntegerProperty();
+    private final String displayName;
+    private final double basePrice;
+    private final int maxOccupancy;
 
-    public RoomType(String name, double price, int capacity) {
-        this.name.set(name);
-        this.price.set(price);
-        this.capacity.set(capacity);
+    RoomType(String displayName, double basePrice, int maxOccupancy) {
+        this.displayName = displayName;
+        this.basePrice = basePrice;
+        this.maxOccupancy = maxOccupancy;
     }
 
-    public String getName() {
-        return name.getValue();
+    public String getDisplayName() {
+        return displayName;
     }
 
-    public StringProperty getNameProperty() {
-        return name;
+    public double getBasePrice() {
+        return basePrice;
     }
 
-    public double getPrice() {
-        return price.getValue();
-    }
-
-    public DoubleProperty getPriceProperty() {
-        return price;
-    }
-
-    public int getCapacity() {
-        return capacity.getValue();
-    }
-
-    public IntegerProperty getCapacityProperty() {
-        return capacity;
+    public int getMaxOccupancy() {
+        return maxOccupancy;
     }
 }

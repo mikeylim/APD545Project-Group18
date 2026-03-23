@@ -1,38 +1,73 @@
 package com.hotel.model;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "addons")
 public class Addon {
-    private final StringProperty name = new SimpleStringProperty();
-    private final DoubleProperty price = new SimpleDoubleProperty();
-    private final PricingModel pricingModel;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
+    private double price;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PricingModel pricingModel;
+
+    // Default constructor required by JPA
+    public Addon() {}
 
     public Addon(String name, double price, PricingModel pricingModel) {
-        this.name.setValue(name);
-        this.price.setValue(price);
+        this.name = name;
+        this.price = price;
         this.pricingModel = pricingModel;
     }
 
-    public String getName() {
-        return name.getValue();
+    // Getters and Setters
+    public Long getId() {
+        return id;
     }
 
-    public StringProperty getNameProperty() {
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
         return name;
     }
 
-    public double getPrice() {
-        return price.getValue();
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public DoubleProperty getPriceProperty() {
+    public double getPrice() {
         return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 
     public PricingModel getPricingModel() {
         return pricingModel;
+    }
+
+    public void setPricingModel(PricingModel pricingModel) {
+        this.pricingModel = pricingModel;
+    }
+
+    /**
+     * Calculate addon cost based on number of nights
+     */
+    public double calculateCost(int nights) {
+        if (pricingModel == PricingModel.PER_NIGHT) {
+            return price * nights;
+        }
+        return price; // PER_RESERVATION
     }
 }

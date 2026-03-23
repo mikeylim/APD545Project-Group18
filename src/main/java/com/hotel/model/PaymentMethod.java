@@ -1,5 +1,7 @@
 package com.hotel.model;
 
 public enum PaymentMethod {
-    Cash, Credit, Loyalty
+    CASH,
+    CREDIT_CARD,
+    LOYALTY_POINTS
 }
