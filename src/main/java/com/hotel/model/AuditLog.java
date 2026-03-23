@@ -13,8 +13,9 @@ public class AuditLog {
     @Column(nullable = false)
     private LocalDateTime timestamp;
 
-    @Column(nullable = false)
-    private String actor; // Username of the admin
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User actor;
 
     @Column(nullable = false)
     private String action; // e.g., "LOGIN", "CREATE", "UPDATE", "DELETE"
@@ -33,7 +34,7 @@ public class AuditLog {
         this.timestamp = LocalDateTime.now();
     }
 
-    public AuditLog(String actor, String action, String entityType, String entityId, String message) {
+    public AuditLog(User actor, String action, String entityType, String entityId, String message) {
         this();
         this.actor = actor;
         this.action = action;
@@ -59,11 +60,11 @@ public class AuditLog {
         this.timestamp = timestamp;
     }
 
-    public String getActor() {
+    public User getActor() {
         return actor;
     }
 
-    public void setActor(String actor) {
+    public void setActor(User actor) {
         this.actor = actor;
     }
 
