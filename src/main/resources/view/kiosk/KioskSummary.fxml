@@ -19,44 +19,47 @@
     </top>
 
     <center>
-        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
-            <VBox alignment="CENTER" spacing="20">
-                <padding><Insets top="20" bottom="20" left="40" right="40"/></padding>
+        <VBox spacing="20">
+            <padding><Insets top="30" bottom="0" left="50" right="50"/></padding>
 
-                <!-- Progress indicator -->
-                <HBox alignment="CENTER" spacing="20">
-                    <VBox alignment="CENTER" spacing="5">
-                        <Label text="✓" styleClass="kiosk-step-indicator kiosk-step-indicator-completed" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
-                        <Label text="Guests" style="-fx-font-size: 12px;"/>
-                    </VBox>
-                    <Label text="—" style="-fx-text-fill: #27ae60;"/>
-                    <VBox alignment="CENTER" spacing="5">
-                        <Label text="✓" styleClass="kiosk-step-indicator kiosk-step-indicator-completed" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
-                        <Label text="Dates" style="-fx-font-size: 12px;"/>
-                    </VBox>
-                    <Label text="—" style="-fx-text-fill: #27ae60;"/>
-                    <VBox alignment="CENTER" spacing="5">
-                        <Label text="✓" styleClass="kiosk-step-indicator kiosk-step-indicator-completed" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
-                        <Label text="Room" style="-fx-font-size: 12px;"/>
-                    </VBox>
-                    <Label text="—" style="-fx-text-fill: #27ae60;"/>
-                    <VBox alignment="CENTER" spacing="5">
-                        <Label text="✓" styleClass="kiosk-step-indicator kiosk-step-indicator-completed" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
-                        <Label text="Add-ons" style="-fx-font-size: 12px;"/>
-                    </VBox>
-                    <Label text="—" style="-fx-text-fill: #27ae60;"/>
-                    <VBox alignment="CENTER" spacing="5">
-                        <Label text="✓" styleClass="kiosk-step-indicator kiosk-step-indicator-completed" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
-                        <Label text="Details" style="-fx-font-size: 12px;"/>
-                    </VBox>
-                    <Label text="—" style="-fx-text-fill: #27ae60;"/>
-                    <VBox alignment="CENTER" spacing="5">
-                        <Label text="6" styleClass="kiosk-step-indicator kiosk-step-indicator-active" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
-                        <Label text="Confirm" style="-fx-font-size: 12px;"/>
-                    </VBox>
-                </HBox>
+            <!-- Progress indicator (fixed position) -->
+            <HBox alignment="CENTER" spacing="20">
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="✓" styleClass="kiosk-step-indicator kiosk-step-indicator-completed"/>
+                    <Label text="Guests" styleClass="kiosk-step-label-completed"/>
+                </VBox>
+                <Label text="—" styleClass="kiosk-step-connector-completed"/>
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="✓" styleClass="kiosk-step-indicator kiosk-step-indicator-completed"/>
+                    <Label text="Dates" styleClass="kiosk-step-label-completed"/>
+                </VBox>
+                <Label text="—" styleClass="kiosk-step-connector-completed"/>
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="✓" styleClass="kiosk-step-indicator kiosk-step-indicator-completed"/>
+                    <Label text="Room" styleClass="kiosk-step-label-completed"/>
+                </VBox>
+                <Label text="—" styleClass="kiosk-step-connector-completed"/>
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="✓" styleClass="kiosk-step-indicator kiosk-step-indicator-completed"/>
+                    <Label text="Add-ons" styleClass="kiosk-step-label-completed"/>
+                </VBox>
+                <Label text="—" styleClass="kiosk-step-connector-completed"/>
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="✓" styleClass="kiosk-step-indicator kiosk-step-indicator-completed"/>
+                    <Label text="Details" styleClass="kiosk-step-label-completed"/>
+                </VBox>
+                <Label text="—" styleClass="kiosk-step-connector-completed"/>
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="6" styleClass="kiosk-step-indicator kiosk-step-indicator-active"/>
+                    <Label text="Confirm" styleClass="kiosk-step-label-active"/>
+                </VBox>
+            </HBox>
 
-                <Label text="Review Your Booking" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+            <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS">
+                <VBox alignment="CENTER" spacing="20">
+                    <padding><Insets top="10" bottom="20" left="0" right="0"/></padding>
+
+                    <Label text="Review Your Booking" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
 
                 <HBox spacing="20" alignment="TOP_CENTER">
                     <!-- Left column - Booking details -->
@@ -101,10 +104,11 @@
                             <Label text="Room Selection" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
                             <Separator/>
                             <HBox spacing="10" alignment="CENTER_LEFT">
-                                <VBox spacing="3" HBox.hgrow="ALWAYS">
+                                <VBox spacing="3">
                                     <Label fx:id="summaryRoomType" text="1 × Double Room" style="-fx-font-weight: bold;"/>
                                     <Label text="Up to 4 guests, City view" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
                                 </VBox>
+                                <Region HBox.hgrow="ALWAYS"/>
                                 <Label fx:id="summaryRoomPrice" text="\$150/night" style="-fx-text-fill: #27ae60;"/>
                             </HBox>
                         </VBox>
@@ -116,13 +120,15 @@
                             <VBox fx:id="addonsContainer" spacing="8">
                                 <HBox spacing="10">
                                     <Label text="✓" style="-fx-text-fill: #27ae60;"/>
-                                    <Label text="High-Speed Wi-Fi" HBox.hgrow="ALWAYS"/>
-                                    <Label text="\$10.00"/>
+                                    <Label text="High-Speed Wi-Fi"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Label text="\$10.00" style="-fx-text-fill: #2c3e50;"/>
                                 </HBox>
                                 <HBox spacing="10">
                                     <Label text="✓" style="-fx-text-fill: #27ae60;"/>
-                                    <Label text="Daily Breakfast (2 guests × 2 nights)" HBox.hgrow="ALWAYS"/>
-                                    <Label text="\$100.00"/>
+                                    <Label text="Daily Breakfast (2 guests × 2 nights)"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Label text="\$100.00" style="-fx-text-fill: #2c3e50;"/>
                                 </HBox>
                             </VBox>
                             <Label fx:id="noAddonsLabel" text="No add-ons selected" style="-fx-text-fill: #7f8c8d; -fx-font-style: italic;" visible="false"/>
@@ -138,8 +144,9 @@
                             <!-- Room charges -->
                             <VBox spacing="8">
                                 <Label text="Room Charges" style="-fx-font-weight: bold; -fx-text-fill: #7f8c8d;"/>
-                                <HBox>
-                                    <Label text="Double Room × 2 nights" HBox.hgrow="ALWAYS"/>
+                                <HBox spacing="10">
+                                    <Label text="Double Room × 2 nights"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
                                     <Label fx:id="roomCharges" text="\$300.00"/>
                                 </HBox>
                             </VBox>
@@ -147,12 +154,14 @@
                             <!-- Add-ons charges -->
                             <VBox spacing="8">
                                 <Label text="Add-On Services" style="-fx-font-weight: bold; -fx-text-fill: #7f8c8d;"/>
-                                <HBox>
-                                    <Label text="Wi-Fi" HBox.hgrow="ALWAYS"/>
+                                <HBox spacing="10">
+                                    <Label text="Wi-Fi"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
                                     <Label text="\$10.00"/>
                                 </HBox>
-                                <HBox>
-                                    <Label text="Breakfast" HBox.hgrow="ALWAYS"/>
+                                <HBox spacing="10">
+                                    <Label text="Breakfast"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
                                     <Label text="\$100.00"/>
                                 </HBox>
                             </VBox>
@@ -160,28 +169,32 @@
                             <Separator/>
 
                             <!-- Subtotal -->
-                            <HBox>
-                                <Label text="Subtotal" style="-fx-font-weight: bold;" HBox.hgrow="ALWAYS"/>
+                            <HBox spacing="10">
+                                <Label text="Subtotal" style="-fx-font-weight: bold;"/>
+                                <Region HBox.hgrow="ALWAYS"/>
                                 <Label fx:id="subtotalAmount" text="\$410.00" style="-fx-font-weight: bold;"/>
                             </HBox>
 
                             <!-- Tax -->
-                            <HBox>
-                                <Label text="Tax (13\% HST)" HBox.hgrow="ALWAYS"/>
+                            <HBox spacing="10">
+                                <Label text="Tax (13% HST)"/>
+                                <Region HBox.hgrow="ALWAYS"/>
                                 <Label fx:id="taxAmount" text="\$53.30"/>
                             </HBox>
 
                             <!-- Loyalty discount (if applicable) -->
-                            <HBox fx:id="loyaltyDiscountRow" visible="false" managed="false">
-                                <Label text="Loyalty Discount" style="-fx-text-fill: #27ae60;" HBox.hgrow="ALWAYS"/>
+                            <HBox fx:id="loyaltyDiscountRow" spacing="10" visible="false" managed="false">
+                                <Label text="Loyalty Discount" style="-fx-text-fill: #27ae60;"/>
+                                <Region HBox.hgrow="ALWAYS"/>
                                 <Label fx:id="loyaltyDiscount" text="-\$0.00" style="-fx-text-fill: #27ae60;"/>
                             </HBox>
 
                             <Separator style="-fx-border-width: 2;"/>
 
                             <!-- Total -->
-                            <HBox alignment="CENTER_LEFT">
-                                <Label text="ESTIMATED TOTAL" styleClass="summary-total" HBox.hgrow="ALWAYS"/>
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Label text="ESTIMATED TOTAL" styleClass="summary-total"/>
+                                <Region HBox.hgrow="ALWAYS"/>
                                 <Label fx:id="totalAmount" text="\$463.30" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #27ae60;"/>
                             </HBox>
 
@@ -201,8 +214,9 @@
                         </VBox>
                     </VBox>
                 </HBox>
-            </VBox>
-        </ScrollPane>
+                </VBox>
+            </ScrollPane>
+        </VBox>
     </center>
 
     <!-- Navigation -->

@@ -25,33 +25,33 @@
             <!-- Progress indicator -->
             <HBox alignment="CENTER" spacing="20">
                 <VBox alignment="CENTER" spacing="5">
-                    <Label text="✓" styleClass="kiosk-step-indicator kiosk-step-indicator-completed" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
-                    <Label text="Guests" style="-fx-font-size: 12px;"/>
+                    <Label text="✓" styleClass="kiosk-step-indicator kiosk-step-indicator-completed"/>
+                    <Label text="Guests" styleClass="kiosk-step-label-completed"/>
                 </VBox>
-                <Label text="—" style="-fx-text-fill: #27ae60;"/>
+                <Label text="—" styleClass="kiosk-step-connector-completed"/>
                 <VBox alignment="CENTER" spacing="5">
-                    <Label text="2" styleClass="kiosk-step-indicator kiosk-step-indicator-active" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
-                    <Label text="Dates" style="-fx-font-size: 12px;"/>
+                    <Label text="2" styleClass="kiosk-step-indicator kiosk-step-indicator-active"/>
+                    <Label text="Dates" styleClass="kiosk-step-label-active"/>
                 </VBox>
-                <Label text="—" style="-fx-text-fill: #bdc3c7;"/>
+                <Label text="—" styleClass="kiosk-step-connector"/>
                 <VBox alignment="CENTER" spacing="5">
-                    <Label text="3" styleClass="kiosk-step-indicator" style="-fx-text-fill: white;"/>
-                    <Label text="Room" style="-fx-font-size: 12px; -fx-text-fill: #bdc3c7;"/>
+                    <Label text="3" styleClass="kiosk-step-indicator"/>
+                    <Label text="Room" styleClass="kiosk-step-label"/>
                 </VBox>
-                <Label text="—" style="-fx-text-fill: #bdc3c7;"/>
+                <Label text="—" styleClass="kiosk-step-connector"/>
                 <VBox alignment="CENTER" spacing="5">
-                    <Label text="4" styleClass="kiosk-step-indicator" style="-fx-text-fill: white;"/>
-                    <Label text="Add-ons" style="-fx-font-size: 12px; -fx-text-fill: #bdc3c7;"/>
+                    <Label text="4" styleClass="kiosk-step-indicator"/>
+                    <Label text="Add-ons" styleClass="kiosk-step-label"/>
                 </VBox>
-                <Label text="—" style="-fx-text-fill: #bdc3c7;"/>
+                <Label text="—" styleClass="kiosk-step-connector"/>
                 <VBox alignment="CENTER" spacing="5">
-                    <Label text="5" styleClass="kiosk-step-indicator" style="-fx-text-fill: white;"/>
-                    <Label text="Details" style="-fx-font-size: 12px; -fx-text-fill: #bdc3c7;"/>
+                    <Label text="5" styleClass="kiosk-step-indicator"/>
+                    <Label text="Details" styleClass="kiosk-step-label"/>
                 </VBox>
-                <Label text="—" style="-fx-text-fill: #bdc3c7;"/>
+                <Label text="—" styleClass="kiosk-step-connector"/>
                 <VBox alignment="CENTER" spacing="5">
-                    <Label text="6" styleClass="kiosk-step-indicator" style="-fx-text-fill: white;"/>
-                    <Label text="Confirm" style="-fx-font-size: 12px; -fx-text-fill: #bdc3c7;"/>
+                    <Label text="6" styleClass="kiosk-step-indicator"/>
+                    <Label text="Confirm" styleClass="kiosk-step-label"/>
                 </VBox>
             </HBox>
 

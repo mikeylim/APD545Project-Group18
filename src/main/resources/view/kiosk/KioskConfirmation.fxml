@@ -96,7 +96,7 @@
 
             <!-- Action buttons -->
             <HBox spacing="20" alignment="CENTER">
-                <Button text="Print Confirmation" styleClass="btn-secondary" prefWidth="180" prefHeight="45"/>
+                <Button text="Print Confirmation" styleClass="btn-secondary" onAction="#printConfirmation" prefWidth="180" prefHeight="45"/>
                 <Button text="New Booking" styleClass="btn-primary" onAction="#startNewBooking" prefWidth="180" prefHeight="45"/>
             </HBox>
             </VBox>

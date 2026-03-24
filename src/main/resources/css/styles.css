@@ -211,20 +211,53 @@
     -fx-text-fill: #7f8c8d;
 }
 
+/* Progress step indicators */
 .kiosk-step-indicator {
     -fx-background-color: #bdc3c7;
     -fx-background-radius: 15;
     -fx-min-width: 30;
     -fx-min-height: 30;
     -fx-alignment: center;
+    -fx-text-fill: #7f8c8d;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
 }
 
 .kiosk-step-indicator-active {
     -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(52, 152, 219, 0.5), 8, 0, 0, 2);
 }
 
 .kiosk-step-indicator-completed {
     -fx-background-color: #27ae60;
+    -fx-text-fill: white;
+}
+
+/* Step labels below indicators */
+.kiosk-step-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #7f8c8d;
+}
+
+.kiosk-step-label-active {
+    -fx-font-size: 12px;
+    -fx-text-fill: #3498db;
+    -fx-font-weight: bold;
+}
+
+.kiosk-step-label-completed {
+    -fx-font-size: 12px;
+    -fx-text-fill: #27ae60;
+}
+
+/* Step connector lines */
+.kiosk-step-connector {
+    -fx-text-fill: #bdc3c7;
+}
+
+.kiosk-step-connector-completed {
+    -fx-text-fill: #27ae60;
 }
 
 .room-card {
