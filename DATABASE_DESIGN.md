@@ -4,6 +4,43 @@
 
 This document explains the complete database design for Milestone 2, including all tables, relationships, and JPA annotations used.
 
+**Database Technology:** H2 Embedded Database
+**ORM Framework:** Hibernate 6.4.4 with JPA
+**Total Tables:** 9 entity tables + 2 join tables
+
+---
+
+## H2 Database Configuration
+
+We use **H2**, an embedded file-based database that requires no separate server installation.
+
+**Location:** `./data/hoteldb.mv.db`
+
+**Key Configuration (persistence.xml):**
+
+```xml
+<persistence-unit name="HotelPU">
+    <properties>
+        <!-- H2 embedded database -->
+        <property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver"/>
+        <property name="jakarta.persistence.jdbc.url"
+                  value="jdbc:h2:file:./data/hoteldb;AUTO_SERVER=TRUE"/>
+
+        <!-- Auto-create/update tables from entity classes -->
+        <property name="hibernate.hbm2ddl.auto" value="update"/>
+
+        <!-- Show SQL in console for debugging -->
+        <property name="hibernate.show_sql" value="true"/>
+    </properties>
+</persistence-unit>
+```
+
+**Benefits of H2:**
+- No MySQL/PostgreSQL server setup required
+- Database file created automatically on first run
+- Each developer has their own local database
+- Easy to reset: just delete the `/data` folder
+
 ---
 
 ## Database Tables Summary
@@ -127,8 +164,8 @@ This document explains the complete database design for Milestone 2, including a
 |-----------|------------------|------------|---------------|
 | SINGLE    | Single Room      | $100/night | 2 guests      |
 | DOUBLE    | Double Room      | $150/night | 4 guests      |
-| DELUXE    | Deluxe Room      | $200/night | 2 guests      |
-| PENTHOUSE | Penthouse Suite  | $350/night | 2 guests      |
+| DELUXE    | Deluxe Room      | $200/night | 4 guests      |
+| PENTHOUSE | Penthouse Suite  | $350/night | 6 guests      |
 
 **Room Statuses:**
 - AVAILABLE - Room can be booked
@@ -377,5 +414,113 @@ private List<Room> rooms;
 | Enum Storage | `@Enumerated(EnumType.STRING)` | "Stored as readable text, not numbers" |
 | Foreign Key | `@ManyToOne` + `@JoinColumn` | "Links to another table" |
 | Join Table | `@ManyToMany` + `@JoinTable` | "Creates intermediate table for M:N relationship" |
+
+---
+
+## Kiosk Data Flow
+
+The Kiosk booking flow demonstrates how data persists from the UI to the database.
+
+### Flow Diagram
+
+```
+┌──────────────┐    ┌──────────────────┐    ┌────────────────────┐    ┌────────────┐
+│   Kiosk UI   │───▶│  BookingSession  │───▶│ ReservationService │───▶│  Database  │
+│  (6 screens) │    │   (Singleton)    │    │                    │    │    (H2)    │
+└──────────────┘    └──────────────────┘    └────────────────────┘    └────────────┘
+```
+
+### Step-by-Step Process
+
+1. **User Input (Kiosk Screens 1-5)**
+   - Guest count, dates, room selection, add-ons, personal details
+   - Data stored temporarily in `BookingSession` singleton
+
+2. **Confirmation (Screen 6)**
+   - User reviews booking and clicks "Confirm Reservation"
+   - `KioskController` calls `ReservationService.createReservation()`
+
+3. **Entity Creation (ReservationService)**
+   ```java
+   // Creates Guest entity
+   Guest guest = new Guest(firstName, lastName, email, phone);
+
+   // Creates Reservation with relationships
+   Reservation reservation = new Reservation();
+   reservation.setGuest(guest);           // ManyToOne
+   reservation.setRooms(selectedRooms);   // ManyToMany
+   reservation.setAddons(selectedAddons); // ManyToMany
+   ```
+
+4. **Database Persistence (EntityManager)**
+   ```java
+   EntityManager em = EntityManagerFactoryProvider.createEntityManager();
+   em.getTransaction().begin();
+   em.persist(guest);        // INSERT into guests
+   em.persist(reservation);  // INSERT into reservations + join tables
+   em.getTransaction().commit();
+   ```
+
+5. **Verification**
+   - Confirmation number generated (e.g., `NN-ABC12345`)
+   - Reservation visible in Admin Portal → Reservations
+
+### Singleton Pattern: EntityManagerFactory
+
+```java
+public class EntityManagerFactoryProvider {
+    private static EntityManagerFactory emf;
+
+    public static synchronized EntityManagerFactory getEntityManagerFactory() {
+        if (emf == null) {
+            emf = Persistence.createEntityManagerFactory("HotelPU");
+        }
+        return emf;
+    }
+
+    public static EntityManager createEntityManager() {
+        return getEntityManagerFactory().createEntityManager();
+    }
+}
+```
+
+- **Single instance** of EntityManagerFactory for entire application
+- **New EntityManager** created per transaction (thread-safe)
+- Closed on application shutdown via `Main.stop()`
+
+---
+
+## Initial Seed Data
+
+The `DatabaseInitializer` automatically populates the database on first run.
+
+### Rooms (15 total)
+
+| Floor | Room Numbers | Type      | Price/Night | Max Guests |
+|-------|--------------|-----------|-------------|------------|
+| 1     | 101-105      | Single    | $100        | 2          |
+| 2     | 201-205      | Double    | $150        | 4          |
+| 3     | 301-303      | Deluxe    | $200        | 4          |
+| 4     | 401-402      | Penthouse | $350        | 6          |
+
+### Add-on Services (6 total)
+
+| Name              | Price | Pricing Model    |
+|-------------------|-------|------------------|
+| Breakfast Buffet  | $25   | PER_NIGHT        |
+| Parking           | $15   | PER_NIGHT        |
+| Premium Wi-Fi     | $10   | PER_NIGHT        |
+| Spa Package       | $150  | PER_RESERVATION  |
+| Airport Shuttle   | $50   | PER_RESERVATION  |
+| Late Checkout     | $30   | PER_RESERVATION  |
+
+### Admin Users (2 accounts)
+
+| Username | Password   | Role    |
+|----------|------------|---------|
+| admin    | admin123   | ADMIN   |
+| manager  | manager123 | MANAGER |
+
+*Note: Passwords are stored as BCrypt hashes, not plain text.*
 
 ---
