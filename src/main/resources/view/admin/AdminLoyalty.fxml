@@ -121,6 +121,9 @@
                         </HBox>
 
                         <TableView VBox.vgrow="ALWAYS">
+                            <columnResizePolicy>
+                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                            </columnResizePolicy>
                             <columns>
                                 <TableColumn text="Date" prefWidth="100"/>
                                 <TableColumn text="Loyalty #" prefWidth="100"/>

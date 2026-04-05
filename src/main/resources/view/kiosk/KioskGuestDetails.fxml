@@ -167,9 +167,9 @@
                             <CheckBox fx:id="termsCheckbox"/>
                             <HBox spacing="3">
                                 <Label text="I agree to the" style="-fx-font-size: 13px;"/>
-                                <Hyperlink text="Terms and Conditions" style="-fx-font-size: 13px;"/>
+                                <Hyperlink text="Terms and Conditions" style="-fx-font-size: 13px;" onAction="#showTermsAndConditions"/>
                                 <Label text="and" style="-fx-font-size: 13px;"/>
-                                <Hyperlink text="Privacy Policy" style="-fx-font-size: 13px;"/>
+                                <Hyperlink text="Privacy Policy" style="-fx-font-size: 13px;" onAction="#showPrivacyPolicy"/>
                                 <Label text="*" styleClass="required-indicator"/>
                             </HBox>
                         </HBox>

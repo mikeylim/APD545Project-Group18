@@ -29,6 +29,7 @@ public class KioskController {
     private final RoomRepository roomRepository = new RoomRepository();
     private final AddonRepository addonRepository = new AddonRepository();
     private final PricingService pricingService = new PricingService();
+    private final LoyaltyService loyaltyService = LoyaltyService.getInstance();
 
     // ==================== GUEST COUNT SCREEN ====================
     @FXML private Label adultsLabel;
@@ -512,7 +513,9 @@ public class KioskController {
             loyaltyConfirmation.setManaged(session.isJoinLoyalty());
         }
         if (loyaltyNumber != null && session.isJoinLoyalty()) {
-            loyaltyNumber.setText("NR-" + String.format("%06d", reservation.getGuest().getId()));
+            // Show actual loyalty number from database
+            String actualLoyaltyNum = reservation.getGuest().getLoyaltyNumber();
+            loyaltyNumber.setText(actualLoyaltyNum != null ? actualLoyaltyNum : "Enrolled");
         }
     }
 
@@ -531,13 +534,24 @@ public class KioskController {
         }
     }
 
+    /**
+     * Calculate addon cost using the Decorator Pattern.
+     * Wraps the base booking with add-on decorators to compute total price.
+     */
     private double calculateAddonCost(BookingSession session) {
-        double cost = 0;
         int nights = session.getNights();
-        for (Addon addon : session.getSelectedAddons()) {
-            cost += addon.calculateCost(nights);
+        List<Addon> addons = session.getSelectedAddons();
+
+        if (addons.isEmpty()) {
+            return 0;
         }
-        return cost;
+
+        // Use Decorator pattern to calculate addon cost
+        // Start with a base booking (room cost = 0 for addon-only calculation)
+        BookingDecorator.BookingComponent booking =
+            BookingDecorator.createBookingWithAddons(0, "Add-ons", nights, addons);
+
+        return booking.getPrice();
     }
 
     private void updateGuestCounts() {
@@ -569,6 +583,58 @@ public class KioskController {
             "6. Payment due at check-out\n" +
             "7. Cancellation policy: 24 hours notice"
         );
+        alert.showAndWait();
+    }
+
+    @FXML
+    private void showTermsAndConditions() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Terms and Conditions");
+        alert.setHeaderText("NewnhamNexus Hotel - Terms and Conditions");
+        alert.setContentText(
+            "1. RESERVATION & PAYMENT\n" +
+            "   - Full payment is required at check-out.\n" +
+            "   - Rates are subject to applicable taxes.\n\n" +
+            "2. CANCELLATION POLICY\n" +
+            "   - Free cancellation up to 24 hours before check-in.\n" +
+            "   - Late cancellations may incur a one-night charge.\n\n" +
+            "3. CHECK-IN / CHECK-OUT\n" +
+            "   - Check-in: 3:00 PM | Check-out: 11:00 AM\n" +
+            "   - Valid government-issued ID required.\n\n" +
+            "4. HOTEL POLICIES\n" +
+            "   - No smoking in guest rooms.\n" +
+            "   - Guests are liable for any damages.\n" +
+            "   - Management reserves the right to refuse service.\n\n" +
+            "By proceeding, you agree to these terms."
+        );
+        alert.getDialogPane().setMinWidth(450);
+        alert.showAndWait();
+    }
+
+    @FXML
+    private void showPrivacyPolicy() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Privacy Policy");
+        alert.setHeaderText("NewnhamNexus Hotel - Privacy Policy");
+        alert.setContentText(
+            "DATA COLLECTION\n" +
+            "We collect personal information (name, contact details)\n" +
+            "to process your reservation and provide services.\n\n" +
+            "DATA USAGE\n" +
+            "Your information is used to:\n" +
+            "   - Process and manage reservations\n" +
+            "   - Communicate booking confirmations\n" +
+            "   - Improve our services\n\n" +
+            "DATA PROTECTION\n" +
+            "We implement security measures to protect your\n" +
+            "personal information from unauthorized access.\n\n" +
+            "DATA SHARING\n" +
+            "We do not sell or share your personal information\n" +
+            "with third parties except as required by law.\n\n" +
+            "CONTACT\n" +
+            "For privacy inquiries: privacy@newnhamnexus.com"
+        );
+        alert.getDialogPane().setMinWidth(450);
         alert.showAndWait();
     }
 
@@ -863,12 +929,13 @@ public class KioskController {
             // Store completed reservation in session for confirmation screen
             session.setCompletedReservation(reservation);
 
-            // Handle loyalty enrollment
+            // Handle loyalty enrollment - use LoyaltyService to persist to database
             if (session.isJoinLoyalty()) {
                 Guest savedGuest = reservation.getGuest();
                 if (savedGuest.getLoyaltyNumber() == null) {
-                    savedGuest.setLoyaltyNumber("NR-" + String.format("%06d", savedGuest.getId()));
-                    savedGuest.setLoyaltyPoints(100); // Welcome bonus
+                    String loyaltyNum = loyaltyService.enrollGuest(savedGuest);
+                    // Award welcome bonus points
+                    loyaltyService.earnPoints(savedGuest, 10.0, "Welcome bonus");
                 }
             }
 

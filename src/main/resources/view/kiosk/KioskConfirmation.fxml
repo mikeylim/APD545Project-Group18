@@ -105,11 +105,10 @@
 
     <!-- Footer -->
     <bottom>
-        <HBox styleClass="card" alignment="CENTER" spacing="20">
+        <VBox styleClass="card" alignment="CENTER" spacing="5">
             <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
-            <Label text="We look forward to welcoming you!" style="-fx-font-size: 14px; -fx-text-fill: #2c3e50;"/>
-            <Label text="|" style="-fx-text-fill: #bdc3c7;"/>
-            <Label text="Questions? Visit our front desk for assistance." style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;"/>
-        </HBox>
+            <Label text="We look forward to welcoming you!" style="-fx-font-size: 14px; -fx-text-fill: #2c3e50; -fx-font-weight: bold;"/>
+            <Label text="Questions? Visit our front desk for assistance." style="-fx-font-size: 13px; -fx-text-fill: #7f8c8d;"/>
+        </VBox>
     </bottom>
 </BorderPane>

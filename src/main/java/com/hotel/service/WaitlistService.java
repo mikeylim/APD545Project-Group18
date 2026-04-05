@@ -1,5 +1,6 @@
 package com.hotel.service;
 
+import com.hotel.events.RoomAvailabilityObserver;
 import com.hotel.model.*;
 import com.hotel.repository.WaitlistRepository;
 import com.hotel.repository.RoomRepository;
@@ -30,12 +31,18 @@ public class WaitlistService {
      * Add a guest to the waitlist.
      */
     public Waitlist addToWaitlist(Guest guest, RoomType roomType, LocalDate checkIn, LocalDate checkOut) {
+        return addToWaitlist(guest, roomType, checkIn, checkOut, 1, 0);
+    }
+
+    public Waitlist addToWaitlist(Guest guest, RoomType roomType, LocalDate checkIn, LocalDate checkOut, int adults, int children) {
         Waitlist entry = new Waitlist(guest, roomType, checkIn, checkOut);
+        entry.setAdults(adults);
+        entry.setChildren(children);
         Waitlist saved = waitlistRepository.save(entry);
 
         auditService.log("SYSTEM", "WAITLIST_ADD", "Waitlist", saved.getId().toString(),
-            String.format("Added %s to waitlist for %s room (%s to %s)",
-                guest.getFullName(), roomType, checkIn, checkOut));
+            String.format("Added %s to waitlist for %s room (%s to %s) - %d adults, %d children",
+                guest.getFullName(), roomType, checkIn, checkOut, adults, children));
 
         return saved;
     }

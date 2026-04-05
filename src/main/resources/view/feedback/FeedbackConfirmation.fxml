@@ -53,9 +53,10 @@
             </VBox>
 
             <!-- Appreciation message -->
-            <VBox alignment="CENTER" spacing="10" style="-fx-background-color: #d4edda; -fx-padding: 20; -fx-background-radius: 8;" prefWidth="450">
-                <Label text="Your Opinion Matters!" style="-fx-font-weight: bold; -fx-text-fill: #155724;"/>
-                <Label text="We carefully review all feedback to improve our services. We look forward to welcoming you back soon!" wrapText="true" style="-fx-text-fill: #155724; -fx-text-alignment: center;" maxWidth="400"/>
+            <VBox alignment="CENTER" spacing="8" style="-fx-background-color: #d4edda; -fx-padding: 20; -fx-background-radius: 8;" prefWidth="450">
+                <Label text="Your Opinion Matters!" style="-fx-font-weight: bold; -fx-text-fill: #155724; -fx-font-size: 15px;"/>
+                <Label text="We carefully review all feedback to improve our services." style="-fx-text-fill: #155724; -fx-text-alignment: center;"/>
+                <Label text="We look forward to welcoming you back soon!" style="-fx-text-fill: #155724; -fx-text-alignment: center;"/>
             </VBox>
 
             <!-- Action buttons -->

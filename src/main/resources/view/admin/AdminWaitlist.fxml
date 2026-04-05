@@ -89,14 +89,15 @@
             <VBox styleClass="card" spacing="15" VBox.vgrow="ALWAYS">
                 <TableView fx:id="waitlistTable" VBox.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn text="#" prefWidth="50"/>
-                        <TableColumn text="Guest Name" prefWidth="150"/>
+                        <TableColumn text="#" prefWidth="40"/>
+                        <TableColumn text="Guest Name" prefWidth="140"/>
                         <TableColumn text="Phone" prefWidth="120"/>
-                        <TableColumn text="Email" prefWidth="180"/>
-                        <TableColumn text="Room Type" prefWidth="100"/>
-                        <TableColumn text="Check-in" prefWidth="100"/>
-                        <TableColumn text="Check-out" prefWidth="100"/>
-                        <TableColumn text="Added On" prefWidth="100"/>
+                        <TableColumn text="Email" prefWidth="170"/>
+                        <TableColumn text="Room Type" prefWidth="90"/>
+                        <TableColumn text="Guests" prefWidth="70"/>
+                        <TableColumn text="Check-in" prefWidth="95"/>
+                        <TableColumn text="Check-out" prefWidth="95"/>
+                        <TableColumn text="Added On" prefWidth="95"/>
                         <TableColumn text="Actions" prefWidth="80"/>
                     </columns>
                     <placeholder>
@@ -172,11 +173,13 @@
 
             <VBox spacing="8">
                 <Label text="Number of Guests" styleClass="form-label"/>
-                <HBox spacing="10">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Adults:" prefWidth="60"/>
                     <Spinner fx:id="waitlistAdults" prefWidth="80" min="1" max="10" initialValue="1"/>
-                    <Label text="Adults"/>
+                </HBox>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Children:" prefWidth="60"/>
                     <Spinner fx:id="waitlistChildren" prefWidth="80" min="0" max="10" initialValue="0"/>
-                    <Label text="Children"/>
                 </HBox>
             </VBox>
 

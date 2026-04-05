@@ -21,11 +21,16 @@ import com.hotel.repository.*;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import com.hotel.util.PdfExportUtil;
+import com.hotel.events.RoomAvailabilityEvent;
+import com.hotel.events.RoomAvailabilityNotifier;
 
 /**
  * Controller for all Admin screens.
@@ -57,6 +62,15 @@ public class AdminController {
 
         // Add console observer for waitlist notifications
         waitlistService.addObserver(new WaitlistService.ConsoleNotificationObserver());
+
+        // Subscribe to RoomAvailabilityNotifier (Observer pattern)
+        RoomAvailabilityNotifier.getInstance().subscribe(event -> {
+            System.out.println("=== ROOM AVAILABILITY EVENT (Observer Pattern) ===");
+            System.out.println("Room: " + event.roomNumber() + " (" + event.roomType() + ")");
+            System.out.println("Available at: " + event.availableAt());
+            System.out.println("Matching waitlist entries: " + event.matchingWaitlistCount());
+            System.out.println("===============================================");
+        });
     }
 
     // ========== FXML Elements - Login ==========
@@ -973,7 +987,7 @@ public class AdminController {
     @SuppressWarnings("unchecked")
     private void setupWaitlistTableColumns() {
         ObservableList<TableColumn<Waitlist, ?>> columns = waitlistTable.getColumns();
-        if (columns.size() >= 9) {
+        if (columns.size() >= 10) {
             // #
             ((TableColumn<Waitlist, Number>) columns.get(0)).setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleIntegerProperty(waitlistTable.getItems().indexOf(cellData.getValue()) + 1));
@@ -989,19 +1003,22 @@ public class AdminController {
             // Room Type
             ((TableColumn<Waitlist, String>) columns.get(4)).setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleStringProperty(formatRoomType(cellData.getValue().getRoomType())));
+            // Guests (adults, children)
+            ((TableColumn<Waitlist, String>) columns.get(5)).setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getGuestCountDisplay()));
             // Check-in
-            ((TableColumn<Waitlist, LocalDate>) columns.get(5)).setCellValueFactory(new PropertyValueFactory<>("desiredCheckIn"));
+            ((TableColumn<Waitlist, LocalDate>) columns.get(6)).setCellValueFactory(new PropertyValueFactory<>("desiredCheckIn"));
             // Check-out
-            ((TableColumn<Waitlist, LocalDate>) columns.get(6)).setCellValueFactory(new PropertyValueFactory<>("desiredCheckOut"));
+            ((TableColumn<Waitlist, LocalDate>) columns.get(7)).setCellValueFactory(new PropertyValueFactory<>("desiredCheckOut"));
             // Added On
-            ((TableColumn<Waitlist, String>) columns.get(7)).setCellValueFactory(cellData ->
+            ((TableColumn<Waitlist, String>) columns.get(8)).setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleStringProperty(cellData.getValue().getCreatedAt().toLocalDate().toString()));
             // Actions column with Remove button
-            TableColumn<Waitlist, Void> actionsCol = (TableColumn<Waitlist, Void>) columns.get(8);
+            TableColumn<Waitlist, Void> actionsCol = (TableColumn<Waitlist, Void>) columns.get(9);
             actionsCol.setCellFactory(col -> new TableCell<>() {
-                private final Button removeBtn = new Button("Remove");
+                private final Button removeBtn = new Button("X");
                 {
-                    removeBtn.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-size: 11px; -fx-padding: 3 8; -fx-background-insets: 0;");
+                    removeBtn.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 2 8; -fx-background-insets: 0; -fx-cursor: hand;");
                     removeBtn.setOnAction(e -> {
                         Waitlist entry = getTableView().getItems().get(getIndex());
                         removeFromWaitlist(entry);
@@ -2127,10 +2144,22 @@ public class AdminController {
 
             reservationService.checkOut(currentReservation);
 
-            // Check waitlist for room availability
+            // Check waitlist for room availability and publish events via Observer pattern
+            RoomAvailabilityNotifier notifier = RoomAvailabilityNotifier.getInstance();
             for (Room room : currentReservation.getRooms()) {
-                waitlistService.checkAndNotify(room.getType(),
+                // Notify waitlist service (internal observer)
+                var notifiedEntries = waitlistService.checkAndNotify(room.getType(),
                     LocalDate.now(), LocalDate.now().plusMonths(1));
+
+                // Publish event via RoomAvailabilityNotifier (Observer pattern)
+                RoomAvailabilityEvent event = new RoomAvailabilityEvent(
+                    room.getId(),
+                    room.getRoomNumber(),
+                    room.getType(),
+                    LocalDateTime.now(),
+                    notifiedEntries.size()
+                );
+                notifier.publish(event);
             }
 
             auditService.log(authService.getCurrentUsername(), "CHECKOUT", "Reservation",
@@ -2329,12 +2358,18 @@ public class AdminController {
             // Get room type
             RoomType roomType = RoomType.valueOf(waitlistRoomType.getValue().toUpperCase());
 
+            // Get guest counts from spinners
+            int adults = (waitlistAdults != null) ? waitlistAdults.getValue() : 1;
+            int children = (waitlistChildren != null) ? waitlistChildren.getValue() : 0;
+
             // Add to waitlist
             Waitlist entry = waitlistService.addToWaitlist(
                 guest,
                 roomType,
                 waitlistCheckIn.getValue(),
-                waitlistCheckOut.getValue()
+                waitlistCheckOut.getValue(),
+                adults,
+                children
             );
 
             showInfo("Success", "Added to Waitlist",
@@ -3229,8 +3264,33 @@ public class AdminController {
         if (currentRevenueReport == null) {
             generateRevenueReport();
         }
-        String pdf = reportingService.exportToPDF(currentRevenueReport);
-        saveToFile(pdf, "revenue_report.pdf", "PDF Files", "*.pdf");
+
+        // Build intro lines
+        List<String> introLines = new ArrayList<>();
+        introLines.add("Period: " + currentRevenueReport.getStartDate().format(
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + " to " +
+            currentRevenueReport.getEndDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+        introLines.add("Generated: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+
+        // Build body lines
+        List<String> bodyLines = new ArrayList<>();
+        bodyLines.add("## Summary");
+        bodyLines.add("Total Reservations: " + currentRevenueReport.getReservationCount());
+        bodyLines.add(String.format("Subtotal: $%.2f", currentRevenueReport.getSubtotal()));
+        bodyLines.add(String.format("Tax: $%.2f", currentRevenueReport.getTax()));
+        bodyLines.add(String.format("Discounts: $%.2f", currentRevenueReport.getDiscounts()));
+        bodyLines.add(String.format("Total: $%.2f", currentRevenueReport.getTotal()));
+        bodyLines.add(String.format("Actual Revenue (Paid): $%.2f", currentRevenueReport.getActualRevenue()));
+        if (currentRevenueReport.getDailyData() != null && !currentRevenueReport.getDailyData().isEmpty()) {
+            bodyLines.add("");
+            bodyLines.add("## Daily Revenue Breakdown");
+            for (var day : currentRevenueReport.getDailyData()) {
+                bodyLines.add(String.format("  %s: $%.2f (%d reservations)",
+                    day.getDate(), day.getTotal(), day.getReservationCount()));
+            }
+        }
+
+        savePdfWithPdfBox("Revenue Report", introLines, bodyLines, "revenue_report.pdf");
     }
 
     @FXML
@@ -3247,24 +3307,26 @@ public class AdminController {
         if (currentOccupancyReport == null) {
             generateOccupancyReport();
         }
-        // Create formatted text for occupancy report
-        StringBuilder pdf = new StringBuilder();
-        pdf.append("═".repeat(60)).append("\n");
-        pdf.append("            OCCUPANCY REPORT\n");
-        pdf.append("═".repeat(60)).append("\n\n");
-        pdf.append(currentOccupancyReport.getTitle()).append("\n\n");
-        pdf.append(String.format("Average Occupancy: %.1f%%\n\n", currentOccupancyReport.getAverageOccupancy()));
-        pdf.append(String.format("%-12s %10s %10s %12s\n", "Date", "Available", "Occupied", "Occupancy %"));
-        pdf.append("─".repeat(50)).append("\n");
+
+        // Build intro lines
+        List<String> introLines = new ArrayList<>();
+        introLines.add("Period: " + currentOccupancyReport.getStartDate() + " to " + currentOccupancyReport.getEndDate());
+        introLines.add("Generated: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+
+        // Build body lines
+        List<String> bodyLines = new ArrayList<>();
+        bodyLines.add("## Summary");
+        bodyLines.add(String.format("Average Occupancy: %.1f%%", currentOccupancyReport.getAverageOccupancy()));
+        bodyLines.add("");
+        bodyLines.add("## Daily Occupancy Data");
+        bodyLines.add(String.format("%-12s %10s %10s %12s", "Date", "Available", "Occupied", "Occupancy %"));
+        bodyLines.add("");
         for (var day : currentOccupancyReport.getDailyData()) {
-            pdf.append(String.format("%-12s %10d %10d %11.1f%%\n",
+            bodyLines.add(String.format("%-12s %10d %10d %11.1f%%",
                 day.getDate(), day.getAvailableRooms(), day.getOccupiedRooms(), day.getOccupancyPercent()));
         }
-        pdf.append("═".repeat(60)).append("\n");
-        pdf.append("\nGenerated: ").append(LocalDateTime.now().format(
-            java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).append("\n");
 
-        saveToFile(pdf.toString(), "occupancy_report.pdf", "PDF Files", "*.pdf");
+        savePdfWithPdfBox("Occupancy Report", introLines, bodyLines, "occupancy_report.pdf");
     }
 
     @FXML
@@ -3302,6 +3364,27 @@ public class AdminController {
                     "Exported to: " + file.getName());
             } catch (Exception e) {
                 showError("Save failed: " + e.getMessage());
+            }
+        }
+    }
+
+    private void savePdfWithPdfBox(String title, List<String> introLines, List<String> bodyLines, String defaultName) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save PDF");
+        fileChooser.setInitialFileName(defaultName);
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+
+        Stage stage = Main.getPrimaryStage();
+        File file = fileChooser.showSaveDialog(stage);
+
+        if (file != null) {
+            try {
+                PdfExportUtil.exportDocument(file.toPath(), title, introLines, bodyLines);
+                showInfo("Export Successful", "PDF Saved", "File saved to: " + file.getName());
+                auditService.log(authService.getCurrentUsername(), "EXPORT", "Report", null,
+                    "Exported PDF to: " + file.getName());
+            } catch (Exception e) {
+                showError("PDF export failed: " + e.getMessage());
             }
         }
     }
