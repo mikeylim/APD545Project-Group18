@@ -1,8 +1,11 @@
 # NewnhamNexus Hotel Reservation System - Database Design
 
+**Group:** #18 | **Course:** APD545 NAA - Winter 2026
+**Members:** Dohyun Lim, Phuong Bac Nguyen, Eunki Kim
+
 ## Overview
 
-This document explains the complete database design for Milestone 2, including all tables, relationships, and JPA annotations used.
+This document explains the complete database design for the Hotel Reservation System, including all tables, relationships, and JPA annotations used.
 
 **Database Technology:** H2 Embedded Database
 **ORM Framework:** Hibernate 6.4.4 with JPA
