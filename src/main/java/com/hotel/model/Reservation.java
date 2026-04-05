@@ -68,6 +68,12 @@ public class Reservation {
     @Column
     private double amountPaid = 0.0;
 
+    @Column(columnDefinition = "DOUBLE DEFAULT 0.0")
+    private Double discountPercent = 0.0;
+
+    @Column(columnDefinition = "DOUBLE DEFAULT 0.0")
+    private Double discountAmount = 0.0;
+
     // Default constructor required by JPA
     public Reservation() {
         this.confirmationNumber = generateConfirmationNumber();
@@ -243,5 +249,25 @@ public class Reservation {
 
     public int getTotalGuests() {
         return adults + children;
+    }
+
+    public double getDiscountPercent() {
+        return discountPercent != null ? discountPercent : 0.0;
+    }
+
+    public void setDiscountPercent(double discountPercent) {
+        this.discountPercent = discountPercent;
+    }
+
+    public double getDiscountAmount() {
+        return discountAmount != null ? discountAmount : 0.0;
+    }
+
+    public void setDiscountAmount(double discountAmount) {
+        this.discountAmount = discountAmount;
+    }
+
+    public boolean hasDiscount() {
+        return getDiscountPercent() > 0 || getDiscountAmount() > 0;
     }
 }

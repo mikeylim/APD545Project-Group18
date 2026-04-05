@@ -23,7 +23,7 @@
 
             <!-- Navigation items -->
             <VBox spacing="0" VBox.vgrow="ALWAYS">
-                <Button text="Dashboard" styleClass="sidebar-item sidebar-item-active" onAction="#showDashboard" maxWidth="Infinity"/>
+                <Button text="Dashboard" styleClass="sidebar-item-active" onAction="#showDashboard" maxWidth="Infinity"/>
                 <Button text="Reservations" styleClass="sidebar-item" onAction="#showReservations" maxWidth="Infinity"/>
                 <Button text="Guests" styleClass="sidebar-item" onAction="#showGuests" maxWidth="Infinity"/>
                 <Button text="Payments" styleClass="sidebar-item" onAction="#showPayments" maxWidth="Infinity"/>
@@ -58,29 +58,29 @@
                 <!-- Today's Check-ins -->
                 <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="5">
                     <Label text="Today's Check-ins" styleClass="stat-label"/>
-                    <Label text="12" styleClass="stat-number" style="-fx-text-fill: #3498db;"/>
-                    <Label text="3 pending" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+                    <Label fx:id="todayCheckInsLabel" text="0" styleClass="stat-number" style="-fx-text-fill: #3498db;"/>
+                    <Label text="arrivals" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
                 </VBox>
 
                 <!-- Today's Check-outs -->
                 <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="5">
                     <Label text="Today's Check-outs" styleClass="stat-label"/>
-                    <Label text="8" styleClass="stat-number" style="-fx-text-fill: #e74c3c;"/>
-                    <Label text="2 completed" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+                    <Label fx:id="todayCheckOutsLabel" text="0" styleClass="stat-number" style="-fx-text-fill: #e74c3c;"/>
+                    <Label text="departures" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
                 </VBox>
 
                 <!-- Rooms Occupied -->
                 <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="5">
                     <Label text="Rooms Occupied" styleClass="stat-label"/>
-                    <Label text="42/50" styleClass="stat-number" style="-fx-text-fill: #27ae60;"/>
-                    <Label text="84\% occupancy" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+                    <Label fx:id="occupancyLabel" text="0/0" styleClass="stat-number" style="-fx-text-fill: #27ae60;"/>
+                    <Label text="occupancy" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
                 </VBox>
 
                 <!-- Pending Payments -->
                 <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="5">
                     <Label text="Pending Payments" styleClass="stat-label"/>
-                    <Label text="\$2,450" styleClass="stat-number" style="-fx-text-fill: #f39c12;"/>
-                    <Label text="5 reservations" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+                    <Label fx:id="pendingPaymentsLabel" text="0" styleClass="stat-number" style="-fx-text-fill: #f39c12;"/>
+                    <Label text="reservations" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
                 </VBox>
             </HBox>
 
@@ -99,7 +99,7 @@
 
                 <!-- Recent Reservations -->
                 <VBox styleClass="card" spacing="15" HBox.hgrow="ALWAYS">
-                    <HBox alignment="CENTER_LEFT">
+                    <HBox alignment="CENTER_LEFT" spacing="15">
                         <Label text="Recent Reservations" style="-fx-font-size: 16px; -fx-font-weight: bold;" HBox.hgrow="ALWAYS"/>
                         <Button text="View All" styleClass="btn-small btn-secondary" onAction="#showReservations"/>
                     </HBox>
@@ -107,50 +107,16 @@
 
                     <TableView fx:id="recentReservationsTable" VBox.vgrow="ALWAYS">
                         <columns>
-                            <TableColumn text="Conf. #" prefWidth="100"/>
-                            <TableColumn text="Guest Name" prefWidth="150"/>
-                            <TableColumn text="Room" prefWidth="100"/>
-                            <TableColumn text="Check-in" prefWidth="100"/>
-                            <TableColumn text="Status" prefWidth="80"/>
+                            <TableColumn text="Conf. #" prefWidth="120"/>
+                            <TableColumn text="Guest Name" prefWidth="180"/>
+                            <TableColumn text="Room" prefWidth="120"/>
+                            <TableColumn text="Check-in" prefWidth="120"/>
+                            <TableColumn text="Status" prefWidth="100"/>
                         </columns>
                         <placeholder>
                             <Label text="No recent reservations"/>
                         </placeholder>
                     </TableView>
-                </VBox>
-
-                <!-- Notifications -->
-                <VBox styleClass="card" spacing="15" prefWidth="280">
-                    <Label text="Notifications" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
-                    <Separator/>
-                    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
-                        <VBox spacing="10">
-                            <!-- Notification items -->
-                            <VBox spacing="3" style="-fx-background-color: #fff3cd; -fx-padding: 10; -fx-background-radius: 5;">
-                                <Label text="Room Available" style="-fx-font-weight: bold; -fx-text-fill: #856404; -fx-font-size: 12px;"/>
-                                <Label text="Double Room #205 is now available" wrapText="true" style="-fx-font-size: 11px; -fx-text-fill: #856404;"/>
-                                <Label text="2 min ago" style="-fx-font-size: 10px; -fx-text-fill: #b8860b;"/>
-                            </VBox>
-
-                            <VBox spacing="3" style="-fx-background-color: #d4edda; -fx-padding: 10; -fx-background-radius: 5;">
-                                <Label text="New Booking" style="-fx-font-weight: bold; -fx-text-fill: #155724; -fx-font-size: 12px;"/>
-                                <Label text="Reservation NNX-2026030901 confirmed" wrapText="true" style="-fx-font-size: 11px; -fx-text-fill: #155724;"/>
-                                <Label text="15 min ago" style="-fx-font-size: 10px; -fx-text-fill: #28a745;"/>
-                            </VBox>
-
-                            <VBox spacing="3" style="-fx-background-color: #d1ecf1; -fx-padding: 10; -fx-background-radius: 5;">
-                                <Label text="Waitlist Update" style="-fx-font-weight: bold; -fx-text-fill: #0c5460; -fx-font-size: 12px;"/>
-                                <Label text="3 guests on waitlist for Penthouse" wrapText="true" style="-fx-font-size: 11px; -fx-text-fill: #0c5460;"/>
-                                <Label text="1 hour ago" style="-fx-font-size: 10px; -fx-text-fill: #17a2b8;"/>
-                            </VBox>
-
-                            <VBox spacing="3" style="-fx-background-color: #f8d7da; -fx-padding: 10; -fx-background-radius: 5;">
-                                <Label text="Payment Pending" style="-fx-font-weight: bold; -fx-text-fill: #721c24; -fx-font-size: 12px;"/>
-                                <Label text="Reservation #NNX-2026030845 balance due" wrapText="true" style="-fx-font-size: 11px; -fx-text-fill: #721c24;"/>
-                                <Label text="3 hours ago" style="-fx-font-size: 10px; -fx-text-fill: #dc3545;"/>
-                            </VBox>
-                        </VBox>
-                    </ScrollPane>
                 </VBox>
             </HBox>
         </VBox>

@@ -34,57 +34,112 @@
     -fx-text-fill: #bdc3c7;
 }
 
-/* Buttons */
-.btn-primary {
+/* Buttons - Global reset to override JavaFX defaults */
+.button {
     -fx-background-color: #3498db;
+    -fx-background-insets: 0;
+    -fx-background-radius: 5;
     -fx-text-fill: white;
-    -fx-font-size: 14px;
-    -fx-padding: 12 24;
+    -fx-text-overrun: clip;
+    -fx-ellipsis-string: "";
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}
+
+.button:focused {
+    -fx-background-color: #3498db;
+    -fx-background-insets: 0;
+    -fx-border-color: transparent;
+}
+
+.button:pressed {
+    -fx-background-color: #2980b9;
+}
+
+.btn-primary,
+.btn-primary:focused {
+    -fx-background-color: #3498db;
+    -fx-background-insets: 0;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-padding: 10 18;
     -fx-cursor: hand;
     -fx-background-radius: 5;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
 }
 
 .btn-primary:hover {
     -fx-background-color: #2980b9;
 }
 
-.btn-secondary {
+.btn-primary:pressed {
+    -fx-background-color: #2471a3;
+}
+
+.btn-secondary,
+.btn-secondary:focused {
     -fx-background-color: #95a5a6;
+    -fx-background-insets: 0;
     -fx-text-fill: white;
-    -fx-font-size: 14px;
-    -fx-padding: 12 24;
+    -fx-font-size: 13px;
+    -fx-padding: 10 18;
     -fx-cursor: hand;
     -fx-background-radius: 5;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
 }
 
 .btn-secondary:hover {
     -fx-background-color: #7f8c8d;
 }
 
-.btn-success {
+.btn-secondary:pressed {
+    -fx-background-color: #707b7c;
+}
+
+.btn-success,
+.btn-success:focused {
     -fx-background-color: #27ae60;
+    -fx-background-insets: 0;
     -fx-text-fill: white;
-    -fx-font-size: 14px;
-    -fx-padding: 12 24;
+    -fx-font-size: 13px;
+    -fx-padding: 10 18;
     -fx-cursor: hand;
     -fx-background-radius: 5;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
 }
 
 .btn-success:hover {
     -fx-background-color: #219a52;
 }
 
-.btn-danger {
+.btn-success:pressed {
+    -fx-background-color: #1e8449;
+}
+
+.btn-danger,
+.btn-danger:focused {
     -fx-background-color: #e74c3c;
+    -fx-background-insets: 0;
     -fx-text-fill: white;
-    -fx-font-size: 14px;
-    -fx-padding: 12 24;
+    -fx-font-size: 13px;
+    -fx-padding: 10 18;
     -fx-cursor: hand;
     -fx-background-radius: 5;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
 }
 
 .btn-danger:hover {
     -fx-background-color: #c0392b;
+}
+
+.btn-danger:pressed {
+    -fx-background-color: #a93226;
 }
 
 .btn-large {
@@ -95,7 +150,7 @@
 
 .btn-small {
     -fx-font-size: 12px;
-    -fx-padding: 8 16;
+    -fx-padding: 8 14;
 }
 
 /* Cards */
@@ -181,12 +236,18 @@
 
 .sidebar-item {
     -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
     -fx-text-fill: #bdc3c7;
     -fx-font-size: 14px;
-    -fx-padding: 15 20;
+    -fx-padding: 15 20 15 20;
     -fx-alignment: center-left;
     -fx-cursor: hand;
     -fx-max-width: infinity;
+    -fx-border-color: transparent transparent transparent transparent;
+    -fx-border-width: 0 0 0 4;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
 }
 
 .sidebar-item:hover {
@@ -194,8 +255,31 @@
     -fx-text-fill: white;
 }
 
-.sidebar-item-active {
+.sidebar-item:focused {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-border-color: transparent transparent transparent transparent;
+}
+
+.sidebar-item-active,
+.sidebar-item-active:focused,
+.sidebar-item-active:pressed {
     -fx-background-color: #3498db;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 15 20 15 20;
+    -fx-alignment: center-left;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-font-weight: bold;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.sidebar-item-active:hover {
+    -fx-background-color: #2980b9;
     -fx-text-fill: white;
 }
 

@@ -30,7 +30,8 @@
                         <Label text="• Quick and contactless" style="-fx-text-fill: #7f8c8d;"/>
                     </VBox>
                     <Region VBox.vgrow="ALWAYS"/>
-                    <Button text="Start Booking" styleClass="btn-primary btn-large" onAction="#openKiosk" prefWidth="200"/>
+                    <Button text="Start Booking" styleClass="btn-primary btn-large" onAction="#openKiosk" prefWidth="200"
+                            style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-insets: 0; -fx-background-radius: 5; -fx-font-size: 18px; -fx-padding: 20 40;"/>
                 </VBox>
 
                 <!-- Admin Mode Card -->
@@ -45,7 +46,8 @@
                         <Label text="• View reports" style="-fx-text-fill: #7f8c8d;"/>
                     </VBox>
                     <Region VBox.vgrow="ALWAYS"/>
-                    <Button text="Admin Login" styleClass="btn-secondary btn-large" onAction="#openAdminLogin" prefWidth="200"/>
+                    <Button text="Admin Login" styleClass="btn-secondary btn-large" onAction="#openAdminLogin" prefWidth="200"
+                            style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-background-insets: 0; -fx-background-radius: 5; -fx-font-size: 18px; -fx-padding: 20 40;"/>
                 </VBox>
 
                 <!-- Feedback Mode Card -->
@@ -60,7 +62,8 @@
                         <Label text="• Help us improve" style="-fx-text-fill: #7f8c8d;"/>
                     </VBox>
                     <Region VBox.vgrow="ALWAYS"/>
-                    <Button text="Give Feedback" styleClass="btn-success btn-large" onAction="#openFeedback" prefWidth="200"/>
+                    <Button text="Give Feedback" styleClass="btn-success btn-large" onAction="#openFeedback" prefWidth="200"
+                            style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-background-insets: 0; -fx-background-radius: 5; -fx-font-size: 18px; -fx-padding: 20 40;"/>
                 </VBox>
             </HBox>
 

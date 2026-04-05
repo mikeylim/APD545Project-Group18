@@ -27,7 +27,7 @@
                 <Button text="Waitlist" styleClass="sidebar-item" onAction="#showWaitlist" maxWidth="Infinity"/>
                 <Button text="Feedback" styleClass="sidebar-item" onAction="#showFeedbackManagement" maxWidth="Infinity"/>
                 <Button text="Loyalty" styleClass="sidebar-item" onAction="#showLoyalty" maxWidth="Infinity"/>
-                <Button text="Reports" styleClass="sidebar-item sidebar-item-active" onAction="#showReports" maxWidth="Infinity"/>
+                <Button text="Reports" styleClass="sidebar-item-active" onAction="#showReports" maxWidth="Infinity"/>
             </VBox>
             <Button text="Logout" styleClass="sidebar-item" style="-fx-background-color: #c0392b;" onAction="#handleLogout" maxWidth="Infinity"/>
         </VBox>
@@ -52,21 +52,26 @@
                     <VBox spacing="15">
                         <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
 
-                        <!-- Filters -->
-                        <HBox styleClass="card" spacing="15" alignment="CENTER_LEFT">
+                        <!-- Filters with export buttons -->
+                        <HBox styleClass="card" spacing="10" alignment="CENTER_LEFT">
                             <Label text="Period:" style="-fx-font-weight: bold;"/>
-                            <ComboBox fx:id="revenuePeriod" prefWidth="120">
+                            <ComboBox fx:id="revenuePeriod" prefWidth="100" onAction="#onRevenuePeriodChange">
                                 <items>
                                     <javafx.collections.FXCollections fx:factory="observableArrayList">
                                         <String fx:value="Daily"/>
                                         <String fx:value="Weekly"/>
                                         <String fx:value="Monthly"/>
+                                        <String fx:value="Custom"/>
                                     </javafx.collections.FXCollections>
                                 </items>
                             </ComboBox>
-                            <DatePicker fx:id="revenueFromDate" promptText="From"/>
-                            <DatePicker fx:id="revenueToDate" promptText="To"/>
-                            <ComboBox fx:id="revenueRoomType" promptText="Room Type" prefWidth="130">
+                            <Label fx:id="revenueDateLabel" text="Date:" style="-fx-font-weight: bold;"/>
+                            <DatePicker fx:id="revenueDate" prefWidth="130"/>
+                            <Label fx:id="revenueFromLabel" text="From:" style="-fx-font-weight: bold;" visible="false" managed="false"/>
+                            <DatePicker fx:id="revenueFromDate" prefWidth="130" visible="false" managed="false"/>
+                            <Label fx:id="revenueToLabel" text="To:" style="-fx-font-weight: bold;" visible="false" managed="false"/>
+                            <DatePicker fx:id="revenueToDate" prefWidth="130" visible="false" managed="false"/>
+                            <ComboBox fx:id="revenueRoomType" prefWidth="100">
                                 <items>
                                     <javafx.collections.FXCollections fx:factory="observableArrayList">
                                         <String fx:value="All Rooms"/>
@@ -79,27 +84,27 @@
                             </ComboBox>
                             <Button text="Generate" styleClass="btn-primary" onAction="#generateRevenueReport"/>
                             <Region HBox.hgrow="ALWAYS"/>
-                            <Button text="Export CSV" styleClass="btn-secondary" onAction="#exportRevenueCSV"/>
-                            <Button text="Export PDF" styleClass="btn-secondary" onAction="#exportRevenuePDF"/>
+                            <Button text="CSV" styleClass="btn-secondary" onAction="#exportRevenueCSV"/>
+                            <Button text="PDF" styleClass="btn-secondary" onAction="#exportRevenuePDF"/>
                         </HBox>
 
                         <!-- Revenue summary -->
                         <HBox spacing="20">
                             <VBox styleClass="stat-card" spacing="5" HBox.hgrow="ALWAYS">
                                 <Label text="Total Revenue" styleClass="stat-label"/>
-                                <Label text="\$45,230" styleClass="stat-number" style="-fx-text-fill: #27ae60;"/>
+                                <Label fx:id="revenueTotalLabel" text="\$0" styleClass="stat-number" style="-fx-text-fill: #27ae60;"/>
                             </VBox>
                             <VBox styleClass="stat-card" spacing="5" HBox.hgrow="ALWAYS">
                                 <Label text="Reservations" styleClass="stat-label"/>
-                                <Label text="156" styleClass="stat-number"/>
+                                <Label fx:id="revenueReservationsLabel" text="0" styleClass="stat-number"/>
                             </VBox>
                             <VBox styleClass="stat-card" spacing="5" HBox.hgrow="ALWAYS">
                                 <Label text="Total Tax" styleClass="stat-label"/>
-                                <Label text="\$5,220" styleClass="stat-number"/>
+                                <Label fx:id="revenueTaxLabel" text="\$0" styleClass="stat-number"/>
                             </VBox>
                             <VBox styleClass="stat-card" spacing="5" HBox.hgrow="ALWAYS">
                                 <Label text="Total Discounts" styleClass="stat-label"/>
-                                <Label text="\$2,100" styleClass="stat-number" style="-fx-text-fill: #e74c3c;"/>
+                                <Label fx:id="revenueDiscountsLabel" text="\$0" styleClass="stat-number" style="-fx-text-fill: #e74c3c;"/>
                             </VBox>
                         </HBox>
 
@@ -125,21 +130,26 @@
                     <VBox spacing="15">
                         <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
 
-                        <!-- Filters -->
-                        <HBox styleClass="card" spacing="15" alignment="CENTER_LEFT">
+                        <!-- Filters with export buttons -->
+                        <HBox styleClass="card" spacing="10" alignment="CENTER_LEFT">
                             <Label text="View:" style="-fx-font-weight: bold;"/>
-                            <ComboBox fx:id="occupancyView" prefWidth="120">
+                            <ComboBox fx:id="occupancyView" prefWidth="100" onAction="#onOccupancyViewChange">
                                 <items>
                                     <javafx.collections.FXCollections fx:factory="observableArrayList">
                                         <String fx:value="Daily"/>
                                         <String fx:value="Weekly"/>
                                         <String fx:value="Monthly"/>
+                                        <String fx:value="Custom"/>
                                     </javafx.collections.FXCollections>
                                 </items>
                             </ComboBox>
-                            <DatePicker fx:id="occupancyFromDate" promptText="From"/>
-                            <DatePicker fx:id="occupancyToDate" promptText="To"/>
-                            <ComboBox fx:id="occupancyRoomType" promptText="Room Type" prefWidth="130">
+                            <Label fx:id="occupancyDateLabel" text="Date:" style="-fx-font-weight: bold;"/>
+                            <DatePicker fx:id="occupancyDate" prefWidth="130"/>
+                            <Label fx:id="occupancyFromLabel" text="From:" style="-fx-font-weight: bold;" visible="false" managed="false"/>
+                            <DatePicker fx:id="occupancyFromDate" prefWidth="130" visible="false" managed="false"/>
+                            <Label fx:id="occupancyToLabel" text="To:" style="-fx-font-weight: bold;" visible="false" managed="false"/>
+                            <DatePicker fx:id="occupancyToDate" prefWidth="130" visible="false" managed="false"/>
+                            <ComboBox fx:id="occupancyRoomType" prefWidth="100">
                                 <items>
                                     <javafx.collections.FXCollections fx:factory="observableArrayList">
                                         <String fx:value="All Rooms"/>
@@ -152,27 +162,27 @@
                             </ComboBox>
                             <Button text="Generate" styleClass="btn-primary" onAction="#generateOccupancyReport"/>
                             <Region HBox.hgrow="ALWAYS"/>
-                            <Button text="Export CSV" styleClass="btn-secondary"/>
-                            <Button text="Export PDF" styleClass="btn-secondary"/>
+                            <Button text="CSV" styleClass="btn-secondary" onAction="#exportOccupancyCSV"/>
+                            <Button text="PDF" styleClass="btn-secondary" onAction="#exportOccupancyPDF"/>
                         </HBox>
 
                         <!-- Occupancy summary -->
                         <HBox spacing="20">
                             <VBox styleClass="stat-card" spacing="5" HBox.hgrow="ALWAYS">
                                 <Label text="Avg Occupancy" styleClass="stat-label"/>
-                                <Label text="78\%" styleClass="stat-number" style="-fx-text-fill: #27ae60;"/>
+                                <Label fx:id="occupancyAvgLabel" text="0%" styleClass="stat-number" style="-fx-text-fill: #27ae60;"/>
                             </VBox>
                             <VBox styleClass="stat-card" spacing="5" HBox.hgrow="ALWAYS">
                                 <Label text="Total Rooms" styleClass="stat-label"/>
-                                <Label text="50" styleClass="stat-number"/>
+                                <Label fx:id="occupancyTotalRoomsLabel" text="0" styleClass="stat-number"/>
                             </VBox>
                             <VBox styleClass="stat-card" spacing="5" HBox.hgrow="ALWAYS">
                                 <Label text="Peak Occupancy" styleClass="stat-label"/>
-                                <Label text="96\%" styleClass="stat-number"/>
+                                <Label fx:id="occupancyPeakLabel" text="0%" styleClass="stat-number"/>
                             </VBox>
                             <VBox styleClass="stat-card" spacing="5" HBox.hgrow="ALWAYS">
                                 <Label text="Lowest Occupancy" styleClass="stat-label"/>
-                                <Label text="52\%" styleClass="stat-number"/>
+                                <Label fx:id="occupancyLowestLabel" text="0%" styleClass="stat-number"/>
                             </VBox>
                         </HBox>
 
@@ -182,7 +192,7 @@
                                 <TableColumn text="Date" prefWidth="120"/>
                                 <TableColumn text="Rooms Available" prefWidth="120"/>
                                 <TableColumn text="Rooms Occupied" prefWidth="120"/>
-                                <TableColumn text="Occupancy \%" prefWidth="100"/>
+                                <TableColumn text="Occupancy %" prefWidth="100"/>
                             </columns>
                             <placeholder>
                                 <Label text="Select date range and click Generate to view report"/>
@@ -196,10 +206,10 @@
                     <VBox spacing="15">
                         <padding><Insets top="15" right="15" bottom="15" left="15"/></padding>
 
-                        <!-- Filters -->
-                        <HBox styleClass="card" spacing="15" alignment="CENTER_LEFT">
-                            <TextField fx:id="logSearchField" promptText="Search logs..." prefWidth="200" styleClass="search-bar"/>
-                            <ComboBox fx:id="logActionFilter" promptText="Action Type" prefWidth="150">
+                        <!-- Filters with export buttons -->
+                        <HBox styleClass="card" spacing="10" alignment="CENTER_LEFT">
+                            <TextField fx:id="logSearchField" promptText="Search..." prefWidth="140" styleClass="search-bar"/>
+                            <ComboBox fx:id="logActionFilter" prefWidth="110">
                                 <items>
                                     <javafx.collections.FXCollections fx:factory="observableArrayList">
                                         <String fx:value="All Actions"/>
@@ -215,7 +225,7 @@
                                     </javafx.collections.FXCollections>
                                 </items>
                             </ComboBox>
-                            <ComboBox fx:id="logActorFilter" promptText="Actor" prefWidth="130">
+                            <ComboBox fx:id="logActorFilter" prefWidth="100">
                                 <items>
                                     <javafx.collections.FXCollections fx:factory="observableArrayList">
                                         <String fx:value="All Users"/>
@@ -225,12 +235,12 @@
                                     </javafx.collections.FXCollections>
                                 </items>
                             </ComboBox>
-                            <DatePicker fx:id="logFromDate" promptText="From"/>
-                            <DatePicker fx:id="logToDate" promptText="To"/>
-                            <Button text="Filter" styleClass="btn-primary"/>
+                            <DatePicker fx:id="logFromDate" promptText="From" prefWidth="115"/>
+                            <DatePicker fx:id="logToDate" promptText="To" prefWidth="115"/>
+                            <Button text="Filter" styleClass="btn-primary" onAction="#filterActivityLogs"/>
                             <Region HBox.hgrow="ALWAYS"/>
-                            <Button text="Export CSV" styleClass="btn-secondary" onAction="#exportLogsCSV"/>
-                            <Button text="Export TXT" styleClass="btn-secondary" onAction="#exportLogsTXT"/>
+                            <Button text="CSV" styleClass="btn-secondary" onAction="#exportLogsCSV"/>
+                            <Button text="TXT" styleClass="btn-secondary" onAction="#exportLogsTXT"/>
                         </HBox>
 
                         <!-- Logs table -->

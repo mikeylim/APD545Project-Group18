@@ -22,7 +22,7 @@
                 <Button text="Reservations" styleClass="sidebar-item" onAction="#showReservations" maxWidth="Infinity"/>
                 <Button text="Guests" styleClass="sidebar-item" onAction="#showGuests" maxWidth="Infinity"/>
                 <Button text="Payments" styleClass="sidebar-item" onAction="#showPayments" maxWidth="Infinity"/>
-                <Button text="Check-out" styleClass="sidebar-item sidebar-item-active" onAction="#showCheckout" maxWidth="Infinity"/>
+                <Button text="Check-out" styleClass="sidebar-item-active" onAction="#showCheckout" maxWidth="Infinity"/>
                 <Button text="Waitlist" styleClass="sidebar-item" onAction="#showWaitlist" maxWidth="Infinity"/>
                 <Button text="Feedback" styleClass="sidebar-item" onAction="#showFeedbackManagement" maxWidth="Infinity"/>
                 <Button text="Loyalty" styleClass="sidebar-item" onAction="#showLoyalty" maxWidth="Infinity"/>
@@ -44,136 +44,135 @@
                     <Label text="Process guest departures and generate final bills" style="-fx-text-fill: #7f8c8d;"/>
                 </VBox>
 
+                <!-- Search by confirmation number -->
+                <VBox styleClass="card" spacing="10">
+                    <Label text="Search Reservation" style="-fx-font-weight: bold;"/>
+                    <HBox spacing="10">
+                        <TextField fx:id="checkoutSearchField" promptText="Enter confirmation number..." HBox.hgrow="ALWAYS" styleClass="form-field"/>
+                        <Button text="Search" styleClass="btn-primary" onAction="#searchForCheckout"/>
+                    </HBox>
+                </VBox>
+
                 <!-- Today's checkouts -->
                 <VBox styleClass="card" spacing="15" VBox.vgrow="ALWAYS">
                     <HBox alignment="CENTER_LEFT">
-                        <Label text="Today's Check-outs" style="-fx-font-size: 16px; -fx-font-weight: bold;" HBox.hgrow="ALWAYS"/>
-                        <Label text="March 9, 2026" style="-fx-text-fill: #7f8c8d;"/>
+                        <Label text="Checked-In Guests (Ready for Check-out)" style="-fx-font-size: 16px; -fx-font-weight: bold;" HBox.hgrow="ALWAYS"/>
                     </HBox>
 
                     <TableView fx:id="checkoutTable" VBox.vgrow="ALWAYS">
                         <columns>
-                            <TableColumn text="Room" prefWidth="70"/>
-                            <TableColumn text="Conf. #" prefWidth="120"/>
-                            <TableColumn text="Guest Name" prefWidth="150"/>
+                            <TableColumn text="Room" prefWidth="80"/>
+                            <TableColumn text="Conf. #" prefWidth="130"/>
+                            <TableColumn text="Guest Name" prefWidth="160"/>
                             <TableColumn text="Check-in" prefWidth="100"/>
                             <TableColumn text="Balance" prefWidth="100"/>
                             <TableColumn text="Status" prefWidth="100"/>
-                            <TableColumn text="Select" prefWidth="70"/>
                         </columns>
                         <placeholder>
-                            <Label text="No guests scheduled for check-out today"/>
+                            <Label text="No checked-in guests"/>
                         </placeholder>
                     </TableView>
                 </VBox>
             </VBox>
 
-            <!-- Right: Checkout process -->
-            <VBox styleClass="card" spacing="20" prefWidth="420">
-                <Label text="Process Check-out" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
-                <Separator/>
+            <!-- Right: Checkout process - wrapped in ScrollPane to prevent cut-off -->
+            <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;" prefWidth="440">
+                <VBox styleClass="card" spacing="15">
+                    <Label text="Process Check-out" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                    <Separator/>
 
-                <!-- Selected guest info -->
-                <VBox spacing="10" style="-fx-background-color: #ecf0f1; -fx-padding: 15; -fx-background-radius: 5;">
-                    <HBox alignment="CENTER_LEFT">
-                        <Label text="Room #205" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #3498db;" HBox.hgrow="ALWAYS"/>
-                        <Label text="Double Room" style="-fx-text-fill: #7f8c8d;"/>
-                    </HBox>
-                    <GridPane hgap="15" vgap="5">
-                        <Label text="Guest:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                        <Label text="John Smith" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-                        <Label text="Conf #:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                        <Label text="NNX-2026030901" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                        <Label text="Stay:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                        <Label text="Mar 7-9, 2026 (2 nights)" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                    </GridPane>
-                </VBox>
+                    <!-- Selected guest info using GridPane for even spacing -->
+                    <VBox spacing="8" style="-fx-background-color: #f8f9fa; -fx-padding: 15; -fx-background-radius: 5; -fx-border-radius: 5; -fx-border-width: 1;">
+                        <Label text="Reservation Details" style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #2c3e50;"/>
+                        <GridPane hgap="15" vgap="8">
+                            <Label text="Room:" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                            <Label fx:id="checkoutRoomLabel" text="Select a reservation" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #3498db;" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-                <!-- Final bill summary -->
-                <VBox spacing="10">
-                    <Label text="Final Bill" style="-fx-font-weight: bold;"/>
-                    <VBox spacing="5" style="-fx-padding: 10; -fx-background-color: white; -fx-border-color: #bdc3c7; -fx-border-radius: 5;">
-                        <HBox>
-                            <Label text="Room Charges (2 nights)" HBox.hgrow="ALWAYS"/>
-                            <Label text="\$300.00"/>
+                            <Label text="Type:" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                            <Label fx:id="checkoutRoomTypeLabel" text="-" style="-fx-text-fill: #2c3e50;" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                            <Label text="Guest:" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                            <Label fx:id="checkoutGuestLabel" text="-" style="-fx-text-fill: #2c3e50;" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                            <Label text="Conf #:" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                            <Label fx:id="checkoutConfLabel" text="-" style="-fx-text-fill: #3498db;" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                            <Label text="Stay:" style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                            <Label fx:id="checkoutStayLabel" text="-" style="-fx-text-fill: #2c3e50;" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                        </GridPane>
+                    </VBox>
+
+                    <!-- Final bill summary -->
+                    <VBox spacing="8">
+                        <Label text="Final Bill" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                        <GridPane hgap="10" vgap="8" style="-fx-padding: 12; -fx-background-color: #f8f9fa; -fx-border-radius: 5; -fx-border-width: 1;">
+                            <Label fx:id="checkoutOriginalSubtotalDesc" text="Subtotal" style="-fx-text-fill: #2c3e50;" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.hgrow="ALWAYS"/>
+                            <Label fx:id="checkoutOriginalSubtotalLabel" text="0.00" style="-fx-text-fill: #2c3e50;" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                            <Label fx:id="checkoutDiscountDesc" text="Discount" style="-fx-text-fill: #27ae60;" GridPane.columnIndex="0" GridPane.rowIndex="1" visible="false" managed="false"/>
+                            <Label fx:id="checkoutDiscountLabel" text="0.00" style="-fx-text-fill: #27ae60;" GridPane.columnIndex="1" GridPane.rowIndex="1" visible="false" managed="false"/>
+
+                            <Label fx:id="checkoutSubtotalDesc" text="Subtotal" style="-fx-text-fill: #2c3e50;" GridPane.columnIndex="0" GridPane.rowIndex="2" visible="false" managed="false"/>
+                            <Label fx:id="checkoutSubtotalLabel" text="0.00" style="-fx-text-fill: #2c3e50;" GridPane.columnIndex="1" GridPane.rowIndex="2" visible="false" managed="false"/>
+
+                            <Label fx:id="checkoutTaxDescLabel" text="Tax (HST)" style="-fx-text-fill: #2c3e50;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                            <Label fx:id="checkoutTaxLabel" text="0.00" style="-fx-text-fill: #2c3e50;" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                            <Separator GridPane.columnIndex="0" GridPane.rowIndex="4" GridPane.columnSpan="2"/>
+
+                            <Label text="TOTAL" style="-fx-font-weight: bold; -fx-font-size: 15px; -fx-text-fill: #2c3e50;" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+                            <Label fx:id="checkoutTotalLabel" text="0.00" style="-fx-font-weight: bold; -fx-font-size: 15px; -fx-text-fill: #2c3e50;" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+
+                            <Separator GridPane.columnIndex="0" GridPane.rowIndex="6" GridPane.columnSpan="2"/>
+
+                            <Label text="Paid" style="-fx-font-weight: bold; -fx-text-fill: #27ae60;" GridPane.columnIndex="0" GridPane.rowIndex="7"/>
+                            <Label fx:id="checkoutPaidLabel" text="0.00" style="-fx-font-weight: bold; -fx-text-fill: #27ae60;" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+
+                            <Label fx:id="checkoutBalanceDescLabel" text="Balance Due" style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #e74c3c;" GridPane.columnIndex="0" GridPane.rowIndex="8"/>
+                            <Label fx:id="checkoutBalanceLabel" text="0.00" style="-fx-font-weight: bold; -fx-font-size: 14px;" GridPane.columnIndex="1" GridPane.rowIndex="8"/>
+
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="ALWAYS"/>
+                                <ColumnConstraints hgrow="NEVER"/>
+                            </columnConstraints>
+                        </GridPane>
+                    </VBox>
+
+                    <!-- Balance warning -->
+                    <VBox fx:id="balanceWarning" spacing="5" style="-fx-background-color: #f8d7da; -fx-padding: 10; -fx-background-radius: 5;" visible="false" managed="false">
+                        <Label text="Outstanding Balance!" style="-fx-font-weight: bold; -fx-text-fill: #721c24;"/>
+                        <Label text="Payment must be settled before check-out." style="-fx-text-fill: #721c24; -fx-font-size: 12px;"/>
+                        <Button text="Process Payment" styleClass="btn-danger" onAction="#showPayments"/>
+                    </VBox>
+
+                    <!-- Apply discount (role-based) -->
+                    <VBox spacing="8">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="Apply Discount" styleClass="form-label"/>
+                            <Label fx:id="maxDiscountLabel" text="" style="-fx-text-fill: #7f8c8d; -fx-font-size: 11px;"/>
                         </HBox>
-                        <HBox>
-                            <Label text="Add-on Services" HBox.hgrow="ALWAYS"/>
-                            <Label text="\$110.00"/>
-                        </HBox>
-                        <HBox>
-                            <Label text="Minibar Charges" HBox.hgrow="ALWAYS"/>
-                            <Label text="\$25.00"/>
-                        </HBox>
-                        <HBox>
-                            <Label text="Late Check-out Fee" HBox.hgrow="ALWAYS"/>
-                            <Label text="\$0.00"/>
-                        </HBox>
-                        <Separator/>
-                        <HBox>
-                            <Label text="Subtotal" HBox.hgrow="ALWAYS"/>
-                            <Label text="\$435.00"/>
-                        </HBox>
-                        <HBox>
-                            <Label text="Discount Applied" style="-fx-text-fill: #27ae60;" HBox.hgrow="ALWAYS"/>
-                            <Label text="-\$43.50" style="-fx-text-fill: #27ae60;"/>
-                        </HBox>
-                        <HBox>
-                            <Label text="Tax (13\% HST)" HBox.hgrow="ALWAYS"/>
-                            <Label text="\$50.90"/>
-                        </HBox>
-                        <Separator/>
-                        <HBox>
-                            <Label text="TOTAL" style="-fx-font-weight: bold; -fx-font-size: 16px;" HBox.hgrow="ALWAYS"/>
-                            <Label text="\$442.40" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
-                        </HBox>
-                        <Separator/>
-                        <HBox>
-                            <Label text="Paid" style="-fx-text-fill: #27ae60;" HBox.hgrow="ALWAYS"/>
-                            <Label text="\$442.40" style="-fx-text-fill: #27ae60;"/>
-                        </HBox>
-                        <HBox>
-                            <Label text="Balance Due" style="-fx-font-weight: bold;" HBox.hgrow="ALWAYS"/>
-                            <Label fx:id="checkoutBalanceLabel" text="\$0.00" style="-fx-font-weight: bold; -fx-text-fill: #27ae60;"/>
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <TextField fx:id="discountField" promptText="0" prefWidth="60" styleClass="form-field"/>
+                            <Button text="Apply Discount" styleClass="btn-secondary" onAction="#applyDiscount"/>
                         </HBox>
                     </VBox>
-                </VBox>
 
-                <!-- Balance warning -->
-                <VBox fx:id="balanceWarning" spacing="5" style="-fx-background-color: #f8d7da; -fx-padding: 10; -fx-background-radius: 5;" visible="false" managed="false">
-                    <Label text="Outstanding Balance!" style="-fx-font-weight: bold; -fx-text-fill: #721c24;"/>
-                    <Label text="Payment must be settled before check-out." style="-fx-text-fill: #721c24; -fx-font-size: 12px;"/>
-                    <Button text="Process Payment" styleClass="btn-danger" onAction="#showPayments"/>
-                </VBox>
+                    <Separator/>
 
-                <!-- Apply discount (role-based) -->
-                <VBox spacing="8">
-                    <HBox alignment="CENTER_LEFT" spacing="10">
-                        <Label text="Apply Discount" styleClass="form-label"/>
-                        <Label fx:id="discountCapLabel" text="(Max: 15\%)" style="-fx-text-fill: #7f8c8d; -fx-font-size: 11px;"/>
-                    </HBox>
-                    <HBox spacing="10">
-                        <TextField fx:id="discountField" promptText="0" prefWidth="60" styleClass="form-field"/>
-                        <Label text="\%" style="-fx-padding: 10 0;"/>
-                        <Button text="Apply" styleClass="btn-secondary" onAction="#applyDiscount"/>
-                    </HBox>
-                </VBox>
+                    <!-- Checkout actions -->
+                    <VBox spacing="8">
+                        <Button text="Generate Final Bill" styleClass="btn-secondary" maxWidth="Infinity" onAction="#generateBillPDF"/>
+                        <Button text="Print Receipt" styleClass="btn-secondary" maxWidth="Infinity" onAction="#printReceipt"/>
+                        <Button fx:id="completeCheckoutBtn" text="Complete Check-out" styleClass="btn-success" maxWidth="Infinity" onAction="#completeCheckout"/>
+                    </VBox>
 
-                <Separator/>
-
-                <!-- Checkout actions -->
-                <VBox spacing="10">
-                    <Button text="Generate Final Bill (PDF)" styleClass="btn-secondary" maxWidth="Infinity" onAction="#generateBillPDF"/>
-                    <Button text="Print Receipt" styleClass="btn-secondary" maxWidth="Infinity"/>
-                    <Button fx:id="completeCheckoutBtn" text="Complete Check-out" styleClass="btn-success" maxWidth="Infinity" onAction="#completeCheckout"/>
+                    <!-- Feedback reminder -->
+                    <VBox spacing="5" style="-fx-background-color: #d4edda; -fx-padding: 10; -fx-background-radius: 5;" minHeight="60">
+                        <Label text="Feedback Reminder" style="-fx-font-weight: bold; -fx-text-fill: #155724;"/>
+                        <Label text="Invite guest to provide feedback at kiosk." wrapText="true" style="-fx-text-fill: #155724; -fx-font-size: 12px;"/>
+                    </VBox>
                 </VBox>
-
-                <!-- Feedback reminder -->
-                <VBox spacing="5" style="-fx-background-color: #d4edda; -fx-padding: 10; -fx-background-radius: 5;">
-                    <Label text="Feedback Reminder" style="-fx-font-weight: bold; -fx-text-fill: #155724;"/>
-                    <Label text="Please invite the guest to provide feedback at the kiosk before leaving." wrapText="true" style="-fx-text-fill: #155724; -fx-font-size: 12px;"/>
-                </VBox>
-            </VBox>
+            </ScrollPane>
         </HBox>
     </center>
 </BorderPane>

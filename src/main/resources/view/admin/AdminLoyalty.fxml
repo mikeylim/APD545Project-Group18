@@ -26,7 +26,7 @@
                 <Button text="Check-out" styleClass="sidebar-item" onAction="#showCheckout" maxWidth="Infinity"/>
                 <Button text="Waitlist" styleClass="sidebar-item" onAction="#showWaitlist" maxWidth="Infinity"/>
                 <Button text="Feedback" styleClass="sidebar-item" onAction="#showFeedbackManagement" maxWidth="Infinity"/>
-                <Button text="Loyalty" styleClass="sidebar-item sidebar-item-active" onAction="#showLoyalty" maxWidth="Infinity"/>
+                <Button text="Loyalty" styleClass="sidebar-item-active" onAction="#showLoyalty" maxWidth="Infinity"/>
                 <Button text="Reports" styleClass="sidebar-item" onAction="#showReports" maxWidth="Infinity"/>
             </VBox>
             <Button text="Logout" styleClass="sidebar-item" style="-fx-background-color: #c0392b;" onAction="#handleLogout" maxWidth="Infinity"/>
@@ -48,23 +48,23 @@
             <HBox spacing="20">
                 <VBox styleClass="stat-card" spacing="5" HBox.hgrow="ALWAYS" style="-fx-background-color: #fff3cd;">
                     <Label text="Total Members" styleClass="stat-label"/>
-                    <Label text="1,245" styleClass="stat-number" style="-fx-text-fill: #856404;"/>
-                    <Label text="+48 this month" style="-fx-font-size: 11px; -fx-text-fill: #856404;"/>
+                    <Label fx:id="loyaltyTotalMembersLabel" text="0" styleClass="stat-number" style="-fx-text-fill: #856404;"/>
+                    <Label text="Enrolled guests" style="-fx-font-size: 11px; -fx-text-fill: #856404;"/>
                 </VBox>
                 <VBox styleClass="stat-card" spacing="5" HBox.hgrow="ALWAYS">
-                    <Label text="Points Issued (Month)" styleClass="stat-label"/>
-                    <Label text="125,000" styleClass="stat-number" style="-fx-text-fill: #27ae60;"/>
-                    <Label text="\$12,500 value" style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;"/>
+                    <Label text="Total Points Issued" styleClass="stat-label"/>
+                    <Label fx:id="loyaltyTotalPointsLabel" text="0" styleClass="stat-number" style="-fx-text-fill: #27ae60;"/>
+                    <Label fx:id="loyaltyTotalValueLabel" text="\$0 value" style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;"/>
                 </VBox>
                 <VBox styleClass="stat-card" spacing="5" HBox.hgrow="ALWAYS">
-                    <Label text="Points Redeemed (Month)" styleClass="stat-label"/>
-                    <Label text="45,000" styleClass="stat-number" style="-fx-text-fill: #e74c3c;"/>
-                    <Label text="\$4,500 value" style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;"/>
+                    <Label text="Average Points" styleClass="stat-label"/>
+                    <Label fx:id="loyaltyAvgPointsLabel" text="0" styleClass="stat-number" style="-fx-text-fill: #3498db;"/>
+                    <Label text="Per member" style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;"/>
                 </VBox>
                 <VBox styleClass="stat-card" spacing="5" HBox.hgrow="ALWAYS">
-                    <Label text="Outstanding Points" styleClass="stat-label"/>
-                    <Label text="2.5M" styleClass="stat-number" style="-fx-text-fill: #3498db;"/>
-                    <Label text="\$250,000 liability" style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;"/>
+                    <Label text="Points Rates" styleClass="stat-label"/>
+                    <Label fx:id="loyaltyEarningRateLabel" text="Earn: 10 pts/\$1" styleClass="stat-number" style="-fx-font-size: 18px; -fx-text-fill: #27ae60;"/>
+                    <Label fx:id="loyaltyRedemptionRateLabel" text="Redeem: 100 pts = \$1" style="-fx-font-size: 14px; -fx-text-fill: #e74c3c;"/>
                 </VBox>
             </HBox>
 
@@ -77,22 +77,25 @@
 
                         <HBox spacing="15" alignment="CENTER_LEFT">
                             <TextField fx:id="loyaltySearchField" promptText="Search by name, email, or loyalty #" prefWidth="300" styleClass="search-bar"/>
-                            <Button text="Search" styleClass="btn-primary"/>
+                            <Button text="Search" styleClass="btn-primary" onAction="#searchLoyaltyMembers"/>
+                            <Button text="Clear" styleClass="btn-secondary" onAction="#clearLoyaltySearch"/>
                             <Region HBox.hgrow="ALWAYS"/>
                             <Button text="+ Enroll New Member" styleClass="btn-success" onAction="#enrollMember"/>
                         </HBox>
 
                         <TableView fx:id="loyaltyMembersTable" VBox.vgrow="ALWAYS">
                             <columns>
-                                <TableColumn text="Loyalty #" prefWidth="100"/>
+                                <TableColumn text="Loyalty #" prefWidth="120"/>
                                 <TableColumn text="Name" prefWidth="150"/>
-                                <TableColumn text="Email" prefWidth="180"/>
-                                <TableColumn text="Points Balance" prefWidth="100"/>
-                                <TableColumn text="Total Earned" prefWidth="100"/>
-                                <TableColumn text="Total Redeemed" prefWidth="100"/>
-                                <TableColumn text="Member Since" prefWidth="100"/>
-                                <TableColumn text="Actions" prefWidth="100"/>
+                                <TableColumn text="Email" prefWidth="200"/>
+                                <TableColumn text="Phone" prefWidth="120"/>
+                                <TableColumn text="Points" prefWidth="100"/>
+                                <TableColumn text="Value" prefWidth="100"/>
+                                <TableColumn text="Actions" prefWidth="120"/>
                             </columns>
+                            <placeholder>
+                                <Label text="No loyalty members found"/>
+                            </placeholder>
                         </TableView>
                     </VBox>
                 </Tab>
@@ -127,6 +130,9 @@
                                 <TableColumn text="Reservation #" prefWidth="120"/>
                                 <TableColumn text="Description" prefWidth="200"/>
                             </columns>
+                            <placeholder>
+                                <Label text="No transactions found"/>
+                            </placeholder>
                         </TableView>
                     </VBox>
                 </Tab>
@@ -137,114 +143,45 @@
                         <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
 
                         <VBox styleClass="card" spacing="15">
-                            <Label text="Points Earning Rules" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                            <Label text="Points Earning Rate" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
                             <GridPane hgap="20" vgap="15">
-                                <Label text="Points per \$1 spent:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                <Label text="Points earned per $1 spent:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
                                 <HBox spacing="10" alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                                    <TextField text="10" prefWidth="80" styleClass="form-field"/>
+                                    <TextField fx:id="settingsPointsPerDollar" text="10" prefWidth="80" styleClass="form-field"/>
                                     <Label text="points" style="-fx-text-fill: #7f8c8d;"/>
                                 </HBox>
-
-                                <Label text="Bonus for first booking:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                                <HBox spacing="10" alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                    <TextField text="500" prefWidth="80" styleClass="form-field"/>
-                                    <Label text="points" style="-fx-text-fill: #7f8c8d;"/>
-                                </HBox>
+                                <Label text="Example: Spend $100 → Earn 1,000 points" style="-fx-font-style: italic; -fx-text-fill: #7f8c8d;" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2"/>
                             </GridPane>
                         </VBox>
 
                         <VBox styleClass="card" spacing="15">
-                            <Label text="Points Redemption Rules" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                            <Label text="Points Redemption Rate" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
                             <GridPane hgap="20" vgap="15">
-                                <Label text="Points value:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                <Label text="Points needed for $1 discount:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
                                 <HBox spacing="10" alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                                    <TextField text="100" prefWidth="80" styleClass="form-field"/>
-                                    <Label text="points = \$1.00" style="-fx-text-fill: #7f8c8d;"/>
+                                    <TextField fx:id="settingsPointsPerRedemption" text="100" prefWidth="80" styleClass="form-field"/>
+                                    <Label text="points = $1.00" style="-fx-text-fill: #7f8c8d;"/>
                                 </HBox>
+                                <Label text="Example: Redeem 1,000 points → $10 discount" style="-fx-font-style: italic; -fx-text-fill: #7f8c8d;" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2"/>
 
-                                <Label text="Max redemption per reservation:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                                <HBox spacing="10" alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                    <TextField text="50" prefWidth="80" styleClass="form-field"/>
-                                    <Label text="\% of total" style="-fx-text-fill: #7f8c8d;"/>
-                                </HBox>
-
-                                <Label text="Minimum points to redeem:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                                <Label text="Maximum points per redemption:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
                                 <HBox spacing="10" alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                    <TextField text="500" prefWidth="80" styleClass="form-field"/>
-                                    <Label text="points" style="-fx-text-fill: #7f8c8d;"/>
+                                    <TextField fx:id="settingsMaxRedemption" text="5000" prefWidth="80" styleClass="form-field"/>
+                                    <Label text="points ($50 max)" style="-fx-text-fill: #7f8c8d;"/>
+                                </HBox>
+
+                                <Label text="Minimum points to redeem:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                                <HBox spacing="10" alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                    <TextField fx:id="settingsMinRedemption" text="100" prefWidth="80" styleClass="form-field"/>
+                                    <Label text="points ($1 min)" style="-fx-text-fill: #7f8c8d;"/>
                                 </HBox>
                             </GridPane>
                         </VBox>
 
-                        <Button text="Save Settings" styleClass="btn-primary"/>
+                        <Button text="Save Settings" styleClass="btn-primary" onAction="#saveLoyaltySettings"/>
                     </VBox>
                 </Tab>
             </TabPane>
         </VBox>
     </center>
-
-    <!-- Member detail panel -->
-    <right>
-        <VBox styleClass="card" spacing="15" prefWidth="300" style="-fx-background-color: #f8f9fa;">
-            <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
-
-            <HBox alignment="CENTER_LEFT">
-                <Label text="Member Details" style="-fx-font-size: 16px; -fx-font-weight: bold;" HBox.hgrow="ALWAYS"/>
-                <Button text="×" styleClass="btn-small" style="-fx-background-color: transparent;"/>
-            </HBox>
-
-            <Separator/>
-
-            <VBox alignment="CENTER" spacing="5">
-                <Label text="MR-123456" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #f39c12;"/>
-                <Label text="John Smith" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
-                <Label text="Member since Jan 2024" style="-fx-font-size: 11px; -fx-text-fill: #7f8c8d;"/>
-            </VBox>
-
-            <VBox spacing="10" style="-fx-background-color: #fff3cd; -fx-padding: 15; -fx-background-radius: 8;">
-                <Label text="Points Balance" style="-fx-text-fill: #856404; -fx-font-size: 12px;"/>
-                <Label text="2,500" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #856404;"/>
-                <Label text="= \$25.00 value" style="-fx-text-fill: #856404;"/>
-            </VBox>
-
-            <GridPane hgap="10" vgap="8">
-                <Label text="Total Earned:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                <Label text="15,000 pts" style="-fx-text-fill: #27ae60;" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-
-                <Label text="Total Redeemed:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                <Label text="12,500 pts" style="-fx-text-fill: #e74c3c;" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-
-                <Label text="Total Stays:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                <Label text="8" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-
-                <Label text="Total Spent:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-                <Label text="\$1,500.00" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-            </GridPane>
-
-            <Separator/>
-
-            <Label text="Recent Activity" style="-fx-font-weight: bold;"/>
-            <VBox spacing="8">
-                <HBox style="-fx-background-color: #d4edda; -fx-padding: 8; -fx-background-radius: 4;">
-                    <VBox HBox.hgrow="ALWAYS" spacing="2">
-                        <Label text="Earned" style="-fx-font-weight: bold; -fx-font-size: 11px; -fx-text-fill: #155724;"/>
-                        <Label text="Mar 7, 2026" style="-fx-font-size: 10px; -fx-text-fill: #155724;"/>
-                    </VBox>
-                    <Label text="+500 pts" style="-fx-text-fill: #155724; -fx-font-weight: bold;"/>
-                </HBox>
-                <HBox style="-fx-background-color: #f8d7da; -fx-padding: 8; -fx-background-radius: 4;">
-                    <VBox HBox.hgrow="ALWAYS" spacing="2">
-                        <Label text="Redeemed" style="-fx-font-weight: bold; -fx-font-size: 11px; -fx-text-fill: #721c24;"/>
-                        <Label text="Feb 20, 2026" style="-fx-font-size: 10px; -fx-text-fill: #721c24;"/>
-                    </VBox>
-                    <Label text="-1,000 pts" style="-fx-text-fill: #721c24; -fx-font-weight: bold;"/>
-                </HBox>
-            </VBox>
-
-            <Separator/>
-
-            <Button text="Adjust Points" styleClass="btn-secondary" maxWidth="Infinity"/>
-            <Button text="View Full History" styleClass="btn-primary" maxWidth="Infinity"/>
-        </VBox>
-    </right>
 </BorderPane>

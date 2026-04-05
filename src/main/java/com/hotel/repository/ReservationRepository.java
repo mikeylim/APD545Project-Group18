@@ -126,4 +126,22 @@ public class ReservationRepository extends GenericRepository<Reservation, Long> 
             em.close();
         }
     }
+
+    /**
+     * Find checked-out reservations by guest phone number.
+     * Returns most recent first.
+     */
+    public List<Reservation> findCheckedOutByPhone(String phone) {
+        EntityManager em = getEntityManager();
+        try {
+            TypedQuery<Reservation> query = em.createQuery(
+                "SELECT r FROM Reservation r WHERE r.guest.phone = :phone " +
+                "AND r.status = :status ORDER BY r.checkOutDate DESC", Reservation.class);
+            query.setParameter("phone", phone);
+            query.setParameter("status", ReservationStatus.CHECKED_OUT);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
 }

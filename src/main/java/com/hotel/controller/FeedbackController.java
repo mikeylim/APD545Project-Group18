@@ -8,6 +8,16 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import com.hotel.app.Main;
+import com.hotel.model.Feedback;
+import com.hotel.model.Reservation;
+import com.hotel.model.ReservationStatus;
+import com.hotel.model.Room;
+import com.hotel.service.FeedbackService;
+import com.hotel.service.ReservationService;
+
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Controller for guest feedback screens.
@@ -15,15 +25,31 @@ import com.hotel.app.Main;
  */
 public class FeedbackController {
 
-    // Feedback form elements
-    @FXML private TextField confirmationField;
+    // Services
+    private final ReservationService reservationService = new ReservationService();
+    private final FeedbackService feedbackService = new FeedbackService();
+
+    // Lookup elements
+    @FXML private RadioButton lookupByConfirmation;
+    @FXML private RadioButton lookupByPhone;
+    @FXML private ToggleGroup lookupToggleGroup;
+    @FXML private TextField lookupField;
     @FXML private Label lookupErrorLabel;
+
+    // Reservation selection (for multiple reservations)
+    @FXML private VBox reservationSelectionSection;
+    @FXML private ComboBox<String> reservationComboBox;
+    private List<Reservation> foundReservations = new ArrayList<>();
+
+    // Guest info section
     @FXML private VBox guestInfoSection;
-    @FXML private VBox ratingSection;
-    @FXML private VBox notEligibleSection;
     @FXML private Label guestNameLabel;
     @FXML private Label roomLabel;
     @FXML private Label stayDatesLabel;
+
+    // Rating section
+    @FXML private VBox ratingSection;
+    @FXML private VBox notEligibleSection;
     @FXML private TextArea commentsArea;
     @FXML private Label charCountLabel;
     @FXML private Label ratingLabel;
@@ -43,6 +69,9 @@ public class FeedbackController {
     @FXML private ToggleButton tagValue;
 
     private int currentRating = 0;
+    private Reservation currentReservation = null;
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM d, yyyy");
 
     @FXML
     public void initialize() {
@@ -56,41 +85,240 @@ public class FeedbackController {
                 }
             });
         }
+
+        // Update placeholder based on lookup method selection
+        if (lookupByConfirmation != null && lookupByPhone != null && lookupField != null) {
+            lookupByConfirmation.selectedProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal) {
+                    lookupField.setPromptText("e.g., NNX-2026030901");
+                }
+            });
+            lookupByPhone.selectedProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal) {
+                    lookupField.setPromptText("e.g., 416-555-1234");
+                }
+            });
+        }
     }
 
     @FXML
     private void lookupReservation() {
-        String confNum = confirmationField != null ? confirmationField.getText() : "";
+        String searchValue = lookupField != null ? lookupField.getText().trim() : "";
 
-        if (confNum.isEmpty()) {
-            if (lookupErrorLabel != null) {
-                lookupErrorLabel.setText("Please enter a confirmation number");
-            }
+        if (searchValue.isEmpty()) {
+            showError("Please enter a confirmation number or phone number");
             return;
         }
 
-        // For UI prototype, simulate successful lookup
-        if (lookupErrorLabel != null) lookupErrorLabel.setText("");
+        clearError();
+        currentReservation = null;
+        foundReservations.clear();
 
-        // Show guest info
+        // Determine lookup method
+        boolean byPhone = lookupByPhone != null && lookupByPhone.isSelected();
+
+        if (byPhone) {
+            // Lookup by phone - find all checked-out reservations without feedback
+            List<Reservation> allReservations = reservationService.findCheckedOutByPhone(searchValue);
+
+            // Filter to only those without feedback
+            for (Reservation r : allReservations) {
+                if (!feedbackService.getFeedbackByReservation(r).isPresent()) {
+                    foundReservations.add(r);
+                }
+            }
+
+            if (foundReservations.isEmpty()) {
+                if (allReservations.isEmpty()) {
+                    showError("No checked-out reservations found for this phone number");
+                } else {
+                    showError("Feedback has already been submitted for all your stays");
+                }
+                hideAllSections();
+                return;
+            }
+
+            // If multiple reservations found, show selection
+            if (foundReservations.size() > 1) {
+                showReservationSelection();
+                return;
+            }
+
+            // Single reservation found
+            proceedWithReservation(foundReservations.get(0));
+
+        } else {
+            // Lookup by confirmation number
+            Reservation reservation = reservationService.findByConfirmationNumber(searchValue);
+
+            if (reservation == null) {
+                showError("Reservation not found. Please check your confirmation number.");
+                hideAllSections();
+                return;
+            }
+
+            proceedWithReservation(reservation);
+        }
+    }
+
+    private void showReservationSelection() {
+        hideAllSections();
+
+        if (reservationSelectionSection != null) {
+            reservationSelectionSection.setVisible(true);
+            reservationSelectionSection.setManaged(true);
+        }
+
+        if (reservationComboBox != null) {
+            reservationComboBox.getItems().clear();
+            for (Reservation r : foundReservations) {
+                // Format: "Mar 5-7, 2026 | DOUBLE #205 | Conf: NNX-123"
+                StringBuilder display = new StringBuilder();
+                display.append(r.getCheckInDate().format(DATE_FORMATTER))
+                       .append(" - ")
+                       .append(r.getCheckOutDate().format(DATE_FORMATTER))
+                       .append(" | ");
+
+                // Room info
+                for (Room room : r.getRooms()) {
+                    display.append(room.getType().name()).append(" #").append(room.getRoomNumber()).append(" ");
+                }
+                display.append("| Conf: ").append(r.getConfirmationNumber());
+
+                reservationComboBox.getItems().add(display.toString());
+            }
+        }
+    }
+
+    @FXML
+    private void selectReservation() {
+        if (reservationComboBox == null || reservationComboBox.getSelectionModel().isEmpty()) {
+            showError("Please select a stay from the list");
+            return;
+        }
+
+        int selectedIndex = reservationComboBox.getSelectionModel().getSelectedIndex();
+        if (selectedIndex >= 0 && selectedIndex < foundReservations.size()) {
+            Reservation selected = foundReservations.get(selectedIndex);
+            proceedWithReservation(selected);
+        }
+    }
+
+    private void proceedWithReservation(Reservation reservation) {
+        // Hide selection section if visible
+        if (reservationSelectionSection != null) {
+            reservationSelectionSection.setVisible(false);
+            reservationSelectionSection.setManaged(false);
+        }
+
+        // Check if reservation is checked out
+        if (reservation.getStatus() != ReservationStatus.CHECKED_OUT) {
+            showNotEligible("Feedback can only be submitted after check-out.");
+            return;
+        }
+
+        // Check if balance is fully paid
+        if (!reservation.isFullyPaid()) {
+            showNotEligible("Please settle your outstanding balance before submitting feedback.");
+            return;
+        }
+
+        // Check if feedback already submitted
+        if (feedbackService.getFeedbackByReservation(reservation).isPresent()) {
+            showError("Feedback has already been submitted for this reservation.");
+            hideAllSections();
+            return;
+        }
+
+        // All validations passed - show the feedback form
+        currentReservation = reservation;
+        showGuestInfo(reservation);
+        showRatingSection();
+    }
+
+    private void showGuestInfo(Reservation reservation) {
         if (guestInfoSection != null) {
             guestInfoSection.setVisible(true);
             guestInfoSection.setManaged(true);
         }
-        if (guestNameLabel != null) guestNameLabel.setText("John Smith");
-        if (roomLabel != null) roomLabel.setText("Double #205");
-        if (stayDatesLabel != null) stayDatesLabel.setText("Mar 5-7, 2026");
 
-        // Show rating section
+        if (guestNameLabel != null) {
+            guestNameLabel.setText(reservation.getGuest().getFullName());
+        }
+
+        if (roomLabel != null) {
+            // Format room info
+            StringBuilder roomInfo = new StringBuilder();
+            for (Room room : reservation.getRooms()) {
+                if (roomInfo.length() > 0) roomInfo.append(", ");
+                roomInfo.append(room.getType().name()).append(" #").append(room.getRoomNumber());
+            }
+            roomLabel.setText(roomInfo.toString());
+        }
+
+        if (stayDatesLabel != null) {
+            String dates = reservation.getCheckInDate().format(DATE_FORMATTER) + " - " +
+                          reservation.getCheckOutDate().format(DATE_FORMATTER);
+            stayDatesLabel.setText(dates);
+        }
+    }
+
+    private void showRatingSection() {
         if (ratingSection != null) {
             ratingSection.setVisible(true);
             ratingSection.setManaged(true);
         }
-
-        // Hide not eligible section
         if (notEligibleSection != null) {
             notEligibleSection.setVisible(false);
             notEligibleSection.setManaged(false);
+        }
+    }
+
+    private void showNotEligible(String message) {
+        if (notEligibleSection != null) {
+            notEligibleSection.setVisible(true);
+            notEligibleSection.setManaged(true);
+            // Update message if there's a label for it
+        }
+        if (ratingSection != null) {
+            ratingSection.setVisible(false);
+            ratingSection.setManaged(false);
+        }
+        if (guestInfoSection != null) {
+            guestInfoSection.setVisible(false);
+            guestInfoSection.setManaged(false);
+        }
+    }
+
+    private void hideAllSections() {
+        if (reservationSelectionSection != null) {
+            reservationSelectionSection.setVisible(false);
+            reservationSelectionSection.setManaged(false);
+        }
+        if (guestInfoSection != null) {
+            guestInfoSection.setVisible(false);
+            guestInfoSection.setManaged(false);
+        }
+        if (ratingSection != null) {
+            ratingSection.setVisible(false);
+            ratingSection.setManaged(false);
+        }
+        if (notEligibleSection != null) {
+            notEligibleSection.setVisible(false);
+            notEligibleSection.setManaged(false);
+        }
+    }
+
+    private void showError(String message) {
+        if (lookupErrorLabel != null) {
+            lookupErrorLabel.setText(message);
+            lookupErrorLabel.setStyle("-fx-text-fill: #e74c3c;");
+        }
+    }
+
+    private void clearError() {
+        if (lookupErrorLabel != null) {
+            lookupErrorLabel.setText("");
         }
     }
 
@@ -143,7 +371,48 @@ public class FeedbackController {
             return;
         }
 
-        loadScreen("/view/feedback/FeedbackConfirmation.fxml", "NewnhamNexus - Thank You");
+        if (currentReservation == null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("No reservation selected");
+            alert.setContentText("Please look up your reservation first.");
+            alert.showAndWait();
+            return;
+        }
+
+        // Collect sentiment tags
+        List<String> tags = new ArrayList<>();
+        if (tagCleanliness != null && tagCleanliness.isSelected()) tags.add("Cleanliness");
+        if (tagComfort != null && tagComfort.isSelected()) tags.add("Comfort");
+        if (tagService != null && tagService.isSelected()) tags.add("Service");
+        if (tagLocation != null && tagLocation.isSelected()) tags.add("Location");
+        if (tagValue != null && tagValue.isSelected()) tags.add("Value");
+        String sentimentTags = String.join(",", tags);
+
+        // Get comments
+        String comments = commentsArea != null ? commentsArea.getText() : "";
+
+        try {
+            // Submit feedback to database
+            feedbackService.submitFeedback(currentReservation, currentRating, comments, sentimentTags);
+
+            // Navigate to confirmation screen
+            loadScreen("/view/feedback/FeedbackConfirmation.fxml", "NewnhamNexus - Thank You");
+
+        } catch (IllegalStateException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Submission Failed");
+            alert.setHeaderText("Could not submit feedback");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("An error occurred");
+            alert.setContentText("Failed to submit feedback: " + e.getMessage());
+            alert.showAndWait();
+            e.printStackTrace();
+        }
     }
 
     @FXML
