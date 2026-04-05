@@ -140,34 +140,126 @@ public class AppContext {
 
 ### 3.1 Class Diagram
 
-The main entity classes and their relationships:
+The complete entity class diagram showing all entities and their relationships:
 
 ```
-┌──────────────┐       ┌──────────────┐       ┌──────────────┐
-│    Guest     │       │  Reservation │       │     Room     │
-├──────────────┤       ├──────────────┤       ├──────────────┤
-│ id           │ 1   N │ id           │ N   M │ id           │
-│ firstName    │◄──────│ confirmation#│──────►│ roomNumber   │
-│ lastName     │       │ guest_id(FK) │       │ type         │
-│ email        │       │ checkIn      │       │ status       │
-│ phone        │       │ checkOut     │       │ floor        │
-│ loyaltyNum   │       │ status       │       └──────────────┘
-│ loyaltyPts   │       │ total        │
-└──────────────┘       └──────────────┘
-                              │ N
-                              │
-                              │ M
-                       ┌──────▼───────┐
-                       │    Addon     │
-                       ├──────────────┤
-                       │ id           │
-                       │ name         │
-                       │ price        │
-                       │ pricingModel │
-                       └──────────────┘
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                              ENTITY CLASS DIAGRAM                                    │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+
+┌──────────────────┐                                          ┌──────────────────┐
+│      User        │                                          │     AuditLog     │
+├──────────────────┤                                          ├──────────────────┤
+│ - id: Long       │                                          │ - id: Long       │
+│ - username: String│                                         │ - timestamp: DateTime│
+│ - passwordHash: String│                                     │ - actor: String  │
+│ - role: UserRole │                                          │ - action: String │
+│ - active: boolean│                                          │ - entityType: String│
+├──────────────────┤                                          │ - entityId: String│
+│ + getRole()      │                                          │ - message: String│
+│ + isActive()     │                                          └──────────────────┘
+└──────────────────┘
+
+                              ┌──────────────────┐
+        ┌────────────────────►│      Guest       │◄────────────────────┐
+        │                     ├──────────────────┤                     │
+        │              1      │ - id: Long       │      1              │
+        │                     │ - firstName: String│                   │
+        │                     │ - lastName: String│                    │
+        │                     │ - email: String  │                     │
+        │                     │ - phone: String  │                     │
+        │                     │ - loyaltyNumber: String│               │
+        │                     │ - loyaltyPoints: int│                  │
+        │                     ├──────────────────┤                     │
+        │                     │ + getFullName()  │                     │
+        │                     │ + isLoyaltyMember()│                   │
+        │                     └────────┬─────────┘                     │
+        │                              │                               │
+        │                              │ 1                             │
+        │                              │                               │
+        │ N                            ▼ N                             │ N
+┌───────┴──────────┐          ┌──────────────────┐          ┌─────────┴────────┐
+│    Waitlist      │          │   Reservation    │          │    Feedback      │
+├──────────────────┤          ├──────────────────┤          ├──────────────────┤
+│ - id: Long       │          │ - id: Long       │          │ - id: Long       │
+│ - guest: Guest   │          │ - confirmationNumber│       │ - guest: Guest   │
+│ - roomType: RoomType│       │ - guest: Guest   │          │ - reservation: Reservation│
+│ - desiredCheckIn: Date│     │ - checkInDate: Date│        │ - rating: int    │
+│ - desiredCheckOut: Date│    │ - checkOutDate: Date│       │ - comment: String│
+│ - createdAt: DateTime│      │ - adults: int    │          │ - sentimentTag: String│
+│ - notified: boolean│        │ - children: int  │          │ - submittedAt: DateTime│
+│ - converted: boolean│       │ - status: ReservationStatus│├──────────────────┤
+├──────────────────┤          │ - subtotal: double│         │ + getRatingStars()│
+│ + isActive()     │          │ - tax: double    │          └──────────────────┘
+└──────────────────┘          │ - total: double  │                     ▲
+                              │ - amountPaid: double│                  │
+                              │ - rooms: List<Room>│                   │ 1
+                              │ - addons: List<Addon>│                 │
+                              │ - createdAt: DateTime│                 │
+                              ├──────────────────┤                     │
+                              │ + getBalance()   │                     │
+                              │ + getNights()    │                     │
+                              └─────┬───────┬────┴─────────────────────┘
+                                    │       │
+                      ┌─────────────┘       └─────────────┐
+                      │ N:M                           N:M │
+                      ▼                                   ▼
+              ┌──────────────────┐              ┌──────────────────┐
+              │      Room        │              │      Addon       │
+              ├──────────────────┤              ├──────────────────┤
+              │ - id: Long       │              │ - id: Long       │
+              │ - roomNumber: String│           │ - name: String   │
+              │ - type: RoomType │              │ - price: double  │
+              │ - status: RoomStatus│           │ - pricingModel: PricingModel│
+              │ - floor: int     │              ├──────────────────┤
+              │ - basePrice: double│            │ + isPerNight()   │
+              │ - maxOccupancy: int│            └──────────────────┘
+              ├──────────────────┤
+              │ + isAvailable()  │
+              └──────────────────┘
+                                        │
+                                        │ 1
+                              ┌─────────┴────────┐
+                              │                  │
+                              ▼ N                │
+                      ┌──────────────────┐       │
+                      │     Payment      │       │
+                      ├──────────────────┤       │
+                      │ - id: Long       │       │
+                      │ - reservation: Reservation│
+                      │ - paymentMethod: PaymentMethod│
+                      │ - amount: double │       │
+                      │ - paymentDate: DateTime│ │
+                      │ - processedBy: String│   │
+                      │ - transactionRef: String││
+                      ├──────────────────┤       │
+                      │ + isRefund()     │───────┘
+                      └──────────────────┘
+
+
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                              RELATIONSHIP SUMMARY                                    │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│  Guest (1) ────────< (N) Reservation    : One guest can have many reservations      │
+│  Guest (1) ────────< (N) Feedback       : One guest can leave many feedbacks        │
+│  Guest (1) ────────< (N) Waitlist       : One guest can have many waitlist entries  │
+│  Reservation (1) ──< (N) Payment        : One reservation can have many payments    │
+│  Reservation (1) ──< (1) Feedback       : One reservation has one feedback          │
+│  Reservation (N) >──< (M) Room          : Many-to-many via reservation_rooms        │
+│  Reservation (N) >──< (M) Addon         : Many-to-many via reservation_addons       │
+└─────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-Additional entities: `Payment`, `User`, `Feedback`, `Waitlist`, `AuditLog`
+**Enumerations Used:**
+
+| Enum | Values |
+|------|--------|
+| RoomType | SINGLE, DOUBLE, DELUXE, PENTHOUSE |
+| RoomStatus | AVAILABLE, OCCUPIED, RESERVED, OUT_OF_SERVICE |
+| ReservationStatus | PENDING, CONFIRMED, CHECKED_IN, CHECKED_OUT, CANCELLED, NO_SHOW |
+| PaymentMethod | CASH, CREDIT_CARD, LOYALTY_POINTS |
+| PricingModel | PER_NIGHT, PER_RESERVATION |
+| UserRole | ADMIN, MANAGER |
 
 ### 3.2 Sequence Diagram - Kiosk Booking Flow
 
