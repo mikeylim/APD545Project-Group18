@@ -1,0 +1,225 @@
+/***********************************************
+ * Final Project: Hotel Reservation System - Reflection
+ * Course: APD545 NAA - Winter 2026
+ * This assignment represents my own work in accordance with Seneca Academic Policy.
+ * Name: Dohyun Lim, Phuong Bac Nguyen, Eunki Kim
+ * Group: #18
+ * Date: Apr 6, 2026
+* ***********************************************/
+
+TEAM CHALLENGES
+-------------------------------------------------------------------------------
+
+1. Code Merging and Version Control
+
+One of our biggest challenges was merging code when multiple team members worked
+on different features simultaneously. We had situations where both members made
+changes to the same files (like AdminController.java and various FXML files),
+which resulted in numerous merge conflicts. At one point, we had over 20
+conflicting files that needed resolution.
+
+How we resolved it: We decided to establish a "primary version" approach where
+one team member's UI/UX implementation was used as the base, and architectural
+components (like design pattern implementations) were carefully merged in from
+the other version. We also started using feature branches more consistently
+and communicated better about which files we were working on.
+
+2. Integrating JavaFX Frontend with Hibernate/JPA Backend
+
+Connecting the FXML views and controllers to the ORM layer was tricky at first.
+We ran into issues where:
+- Entity objects weren't being persisted correctly (especially with the loyalty
+  enrollment feature where Guest loyalty info was set but never saved)
+- Lazy loading caused exceptions when accessing related entities in the UI
+- The EntityManager lifecycle needed careful management to avoid memory leaks
+
+How we resolved it: We created service classes to act as an intermediary between
+controllers and repositories. We also switched to EAGER fetch for certain
+relationships (like Guest in Waitlist) and made sure to call repository.update()
+when modifying existing entities.
+
+3. Implementing Design Patterns Correctly
+
+Understanding when and how to apply the four required design patterns (Factory,
+Strategy, Observer, Decorator) was challenging. Initially, we had the pattern
+classes implemented but they weren't actually being used anywhere in the code.
+
+How we resolved it: We went through each pattern systematically:
+- Factory: Used in DatabaseInitializer to create all room instances
+- Strategy: Wired into PricingService to switch between weekday/weekend pricing
+- Observer: Connected to checkout flow to publish room availability events
+- Decorator: Integrated into addon pricing calculations in both KioskController
+  and PricingService
+
+4. UI/UX Consistency Across Screens
+
+With multiple team members creating different screens, maintaining consistent
+styling and layout was difficult. Some screens had different sidebar styles,
+button placements, and color schemes.
+
+How we resolved it: We created a shared styles.css file and established
+conventions for common components like sidebars, cards, and buttons. We also
+did a final pass to ensure all admin screens had the same sidebar navigation
+and consistent header styling.
+
+5. Database Schema Evolution
+
+As we added new features, we needed to modify entity classes and add new fields.
+This sometimes caused issues with existing data in the H2 database.
+
+How we resolved it: We used Hibernate's "update" schema generation strategy
+and handled null values carefully in entity getters. For example, when adding
+adults/children fields to Waitlist, we used Integer wrapper types with null-safe
+getters to handle existing records that had NULL values.
+
+
+INDIVIDUAL REFLECTIONS
+-------------------------------------------------------------------------------
+
+[MEMBER 1 - Dohyun Lim]
+
+My primary responsibilities included the kiosk booking flow, admin dashboard
+integration, and overall system architecture.
+
+Coding Challenges:
+- The biggest challenge I faced was getting the booking session to persist
+  correctly through all six steps of the kiosk flow. Data would sometimes get
+  lost between screens, especially the selected add-ons and guest details.
+
+- Implementing the PDF export feature was also tricky. Initially, we were just
+  writing text to .pdf files, which wasn't actual PDF format. I had to integrate
+  Apache PDFBox and create a proper PdfExportUtil class that generates real
+  PDF documents with proper formatting.
+
+- The Observer pattern implementation took several iterations. I initially had
+  events being created but no observers were subscribed to receive them. I had
+  to add the subscription in the AdminController's static initializer.
+
+Solutions:
+- For the booking session, I made sure BookingSession was a proper singleton
+  and added methods to explicitly save/restore addon selections.
+
+- For PDF export, I created helper methods that build Lists of content lines
+  and pass them to PdfExportUtil.exportDocument(), which handles all the
+  PDFBox complexity internally.
+
+- For Observer, I added both a console observer for debugging and wired the
+  RoomAvailabilityNotifier to publish events when checkout completes.
+
+Personal Learnings:
+- I learned that implementing design patterns isn't just about creating the
+  classes - you have to actually USE them in meaningful places in your code.
+
+- Working with JPA/Hibernate taught me a lot about entity lifecycle, especially
+  the difference between transient, managed, and detached states.
+
+- I also improved my Git skills significantly through this project, especially
+  dealing with merge conflicts and branch management.
+
+
+[MEMBER 2 - Phuong Bac Nguyen]
+
+My primary responsibilities included the admin functionality screens, user
+authentication, and reporting features.
+
+Coding Challenges:
+- Creating the admin screens with full CRUD functionality was complex. Each
+  screen needed tables, forms, validation, and proper database integration.
+  The AdminController ended up being over 3000 lines of code.
+
+- Implementing role-based discount caps required understanding how to check
+  the current user's role and enforce limits in the UI. I had to add validation
+  in the checkout screen to prevent admins from applying more than 15% discount
+  while allowing managers up to 30%.
+
+- The reporting feature needed to aggregate data from multiple tables and
+  present it in different formats (CSV and PDF). Building the revenue and
+  occupancy reports required complex date-range queries.
+
+Solutions:
+- I broke down the admin functionality into separate FXML files for each screen
+  (Dashboard, Reservations, Guests, Payments, Checkout, Waitlist, Feedback,
+  Loyalty, Reports) while keeping them all in one controller for shared state.
+
+- For role-based caps, I added helper methods that check the current user's
+  role and return the maximum allowed discount percentage.
+
+- For reporting, I created a ReportingService with inner classes for different
+  report types, making the data structure clear and easy to export.
+
+Personal Learnings:
+- I learned the importance of separating concerns - even though we used one
+  controller, having separate service classes made the code much more testable
+  and maintainable.
+
+- Understanding BCrypt for password hashing was valuable. It's not just about
+  encrypting passwords but also about using proper salting and work factors.
+
+- The project taught me how much planning matters. Features that we designed
+  well upfront were much easier to implement than ones we figured out as we
+  went along.
+
+
+[MEMBER 3 - Eunki Kim]
+
+My primary responsibilities included the feedback system, waitlist management,
+and database entity design.
+
+Coding Challenges:
+- Building the feedback submission flow for guests was challenging because it
+  needed to work independently from the main booking flow. Users had to enter
+  their confirmation number, and the system had to validate it against existing
+  reservations before allowing feedback submission.
+
+- The waitlist feature required careful handling of date ranges. When a room
+  becomes available, we needed to find all waitlist entries whose desired dates
+  overlap with the available period. Writing the JPQL query for this was tricky.
+
+- Setting up the JPA entities with proper relationships (OneToMany, ManyToOne,
+  ManyToMany) took several attempts. Getting cascade types and fetch strategies
+  right was confusing at first.
+
+Solutions:
+- For feedback, I created a separate FeedbackController and dedicated FXML
+  screens (FeedbackEntry, FeedbackConfirmation) to keep the code organized
+  and separate from the kiosk booking flow.
+
+- For waitlist date matching, I wrote a custom repository method that uses
+  JPQL with date comparisons to find entries where the desired check-in is
+  before the available end date and desired check-out is after the available
+  start date.
+
+- For entity relationships, I studied the Hibernate documentation and learned
+  to always define the owning side of relationships. Using @JoinColumn on the
+  owning side and mappedBy on the inverse side made things clearer.
+
+Personal Learnings:
+- I learned that database design decisions made early in the project have
+  long-lasting effects. Changing entity relationships later required updating
+  multiple files and sometimes resetting the database.
+
+- The importance of validation became clear - checking for null values,
+  validating date ranges, and ensuring data integrity prevents many runtime
+  errors.
+
+- Working in a team taught me to write cleaner, more readable code since
+  others need to understand and work with it. Adding comments and following
+  naming conventions helped a lot.
+
+
+CONCLUSION
+-------------------------------------------------------------------------------
+
+Overall, this project was a significant learning experience. Building a
+complete hotel reservation system from scratch taught us about full-stack
+development with JavaFX, the importance of design patterns in real applications,
+and the challenges of team collaboration on a codebase.
+
+Key takeaways:
+1. Design patterns are powerful when applied correctly, not just implemented
+2. Good communication prevents most merge conflicts
+3. Testing with real data reveals issues that unit tests might miss
+4. Documentation (like this reflection) helps solidify what we learned
+
+We're proud of what we accomplished and feel much more confident about
+building enterprise-level desktop applications in Java.
