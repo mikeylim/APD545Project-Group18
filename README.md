@@ -28,6 +28,7 @@ This system replaces the manual process with a computerized solution, including 
 | Hibernate 6.4.4 | JPA/ORM implementation |
 | H2 Database | Embedded file-based database |
 | BCrypt (jbcrypt 0.4) | Password hashing |
+| Apache PDFBox 2.0.31 | PDF report generation |
 | Maven | Build and dependency management |
 
 ---
@@ -66,11 +67,11 @@ This project follows a **3-tier architecture**:
 
 | Pattern | Implementation | Purpose |
 |---------|----------------|---------|
-| **Singleton** | `EntityManagerFactoryProvider` | Single database connection factory |
-| **Factory** | `RoomFactory` | Create room instances (Single, Double, Deluxe, Penthouse) |
-| **Strategy** | `PricingStrategy` | Dynamic pricing (Standard vs Weekend) |
-| **Observer** | *(Final)* | Notify admins when rooms become available |
-| **Decorator** | *(Final)* | Add services (Spa, Wi-Fi, Breakfast) to booking pricing |
+| **Singleton** | `EntityManagerFactoryProvider`, `LoyaltyService`, `AuditService` | Single instance management |
+| **Factory** | `RoomFactory`, `RoomPlanFactory` | Create room instances and room plans |
+| **Strategy** | `PricingStrategy`, `StandardPricingStrategy`, `WeekendPricingStrategy` | Dynamic pricing (weekday vs weekend) |
+| **Observer** | `RoomAvailabilityNotifier`, `RoomAvailabilityObserver` | Notify admins when rooms become available after checkout |
+| **Decorator** | `BookingDecorator`, `ServiceDecorator` | Add services dynamically to booking pricing |
 
 ---
 
@@ -109,33 +110,33 @@ This project follows a **3-tier architecture**:
 | Requirement | Status |
 |-------------|--------|
 | **Admin Functionality** | |
-| Full CRUD for reservations | Pending |
-| Role-based discount caps (Admin: 15%, Manager: 30%) | Pending |
-| Loyalty system (earn/redeem points) | Pending |
-| Search guests/reservations with filters | Pending |
-| Paginated tables with sortable columns | Pending |
-| Process payments (cash, card, loyalty points) | Pending |
-| Deposits, partial payments, refunds | Pending |
-| Checkout with balance settlement | Pending |
+| Full CRUD for reservations | Done |
+| Role-based discount caps (Admin: 15%, Manager: 30%) | Done |
+| Loyalty system (earn/redeem points) | Done |
+| Search guests/reservations with filters | Done |
+| Paginated tables with sortable columns | Done |
+| Process payments (cash, card, loyalty points) | Done |
+| Deposits, partial payments, refunds | Done |
+| Checkout with balance settlement | Done |
 | **Patterns** | |
-| Observer (room availability notifications) | Pending |
-| Decorator (add services to bill dynamically) | Pending |
+| Observer (room availability notifications) | Done |
+| Decorator (add services to bill dynamically) | Done |
 | **Cross-Cutting Concerns** | |
 | BCrypt password hashing | Done |
-| Rotating file logs (1MB limit, 10 files) | Pending |
-| Activity logging (logins, changes, payments) | Pending |
+| Rotating file logs (1MB limit, 10 files) | Done |
+| Activity logging (logins, changes, payments) | Done |
 | **Reporting** | |
-| Revenue reports (day/week/month) with CSV/PDF export | Pending |
-| Occupancy reports with CSV/PDF export | Pending |
-| Feedback summary with CSV export | Pending |
-| Activity logs with CSV/TXT export | Pending |
+| Revenue reports (day/week/month) with CSV/PDF export | Done |
+| Occupancy reports with CSV/PDF export | Done |
+| Feedback summary with CSV export | Done |
+| Activity logs with CSV/TXT export | Done |
 | **Waitlist** | |
-| Add guests to waitlist | Pending |
-| Observer notifications when rooms available | Pending |
-| Convert waitlist entry to reservation | Pending |
+| Add guests to waitlist | Done |
+| Observer notifications when rooms available | Done |
+| Convert waitlist entry to reservation | Done |
 | **Feedback** | |
-| Guest feedback submission (1-5 stars + comments) | Pending |
-| Filter by rating, date, sentiment, guest | Pending |
+| Guest feedback submission (1-5 stars + comments) | Done |
+| Filter by rating, date, sentiment, guest | Done |
 
 ---
 
@@ -189,15 +190,22 @@ This project follows a **3-tier architecture**:
 ├── DATABASE_DESIGN.md                   # Database design documentation
 ├── data/
 │   └── hoteldb.mv.db                    # H2 database (auto-created)
+├── logs/                                # Rotating log files
 ├── src/main/java/com/hotel/
 │   ├── app/
 │   │   ├── Main.java                    # Application entry point
+│   │   ├── AppContext.java              # Dependency injection container
 │   │   ├── DatabaseInitializer.java     # Seeds initial data
 │   │   └── EntityManagerFactoryProvider.java  # Singleton EMF
 │   ├── controller/
 │   │   ├── KioskController.java         # Kiosk booking flow
 │   │   ├── AdminController.java         # Admin dashboard
+│   │   ├── FeedbackController.java      # Guest feedback flow
 │   │   └── ...
+│   ├── events/                          # Observer Pattern
+│   │   ├── RoomAvailabilityEvent.java   # Event data
+│   │   ├── RoomAvailabilityNotifier.java # Event publisher
+│   │   └── RoomAvailabilityObserver.java # Observer interface
 │   ├── model/
 │   │   ├── Guest.java                   # JPA Entity
 │   │   ├── Room.java                    # JPA Entity
@@ -214,15 +222,28 @@ This project follows a **3-tier architecture**:
 │   │   ├── RoomRepository.java
 │   │   ├── GuestRepository.java
 │   │   ├── ReservationRepository.java
+│   │   ├── WaitlistRepository.java
+│   │   ├── FeedbackRepository.java
+│   │   ├── PaymentRepository.java
 │   │   └── AddonRepository.java
-│   └── service/
-│       ├── BookingSession.java          # Kiosk state singleton
-│       ├── ReservationService.java      # Booking logic
-│       ├── RoomFactory.java             # Factory Pattern
-│       ├── PricingStrategy.java         # Strategy interface
-│       ├── StandardPricingStrategy.java # Weekday pricing
-│       ├── WeekendPricingStrategy.java  # Weekend pricing (1.25x)
-│       └── PricingService.java          # Pricing logic
+│   ├── service/
+│   │   ├── BookingSession.java          # Kiosk state singleton
+│   │   ├── ReservationService.java      # Booking logic
+│   │   ├── RoomFactory.java             # Factory Pattern
+│   │   ├── PricingStrategy.java         # Strategy interface
+│   │   ├── StandardPricingStrategy.java # Weekday pricing
+│   │   ├── WeekendPricingStrategy.java  # Weekend pricing (1.25x)
+│   │   ├── PricingService.java          # Pricing logic
+│   │   ├── BookingDecorator.java        # Decorator Pattern
+│   │   ├── LoyaltyService.java          # Loyalty points management
+│   │   ├── WaitlistService.java         # Waitlist management
+│   │   ├── PaymentService.java          # Payment processing
+│   │   ├── FeedbackService.java         # Feedback management
+│   │   ├── ReportingService.java        # Report generation
+│   │   ├── AuditService.java            # Activity logging
+│   │   └── AuthService.java             # Authentication
+│   └── util/
+│       └── PdfExportUtil.java           # PDF generation (PDFBox)
 ├── src/main/resources/
 │   ├── META-INF/
 │   │   └── persistence.xml              # JPA configuration
@@ -231,7 +252,8 @@ This project follows a **3-tier architecture**:
 │   └── view/
 │       ├── kiosk/                       # Kiosk FXML screens
 │       ├── admin/                       # Admin FXML screens
-│       └── ...
+│       ├── feedback/                    # Feedback FXML screens
+│       └── Launcher.fxml                # Main launcher
 ```
 
 ---
@@ -295,9 +317,11 @@ This project follows a **3-tier architecture**:
 - Admin: up to 15%
 - Manager: up to 30%
 
-### Loyalty
-- Configurable earning rate per payment
-- Redemption caps per reservation
+### Loyalty (Nexus Rewards)
+- Earn 10 points per $1 spent
+- Redeem 100 points = $1 discount
+- Welcome bonus: 100 points on enrollment
+- Points balance tracked per guest
 
 ---
 
