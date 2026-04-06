@@ -287,7 +287,7 @@ public class AdminController {
         // Initialize status filter with formatted names
         if (statusFilter != null) {
             statusFilter.setItems(FXCollections.observableArrayList(
-                "All", "Pending", "Confirmed", "Checked In", "Checked Out", "Cancelled"
+                "All", "Confirmed", "Checked In", "Checked Out", "Cancelled", "No Show"
             ));
             statusFilter.setValue("All");
         }
@@ -628,6 +628,104 @@ public class AdminController {
         }
     }
 
+    @FXML
+    private void markAsNoShow() {
+        if (currentReservation == null) {
+            showError("Please select a reservation first");
+            return;
+        }
+
+        // Only CONFIRMED reservations can be marked as no-show
+        if (currentReservation.getStatus() != ReservationStatus.CONFIRMED) {
+            showError("Only confirmed reservations can be marked as no-show.\n\nCurrent status: " +
+                formatStatus(currentReservation.getStatus()));
+            return;
+        }
+
+        // Check if check-in date has passed
+        LocalDate today = LocalDate.now();
+        if (!currentReservation.getCheckInDate().isBefore(today)) {
+            showError("Cannot mark as no-show before the check-in date.\n\n" +
+                "Check-in date: " + currentReservation.getCheckInDate() + "\n" +
+                "Today: " + today);
+            return;
+        }
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Mark as No Show");
+        confirm.setHeaderText("Mark reservation as No Show?");
+        confirm.setContentText("Reservation " + currentReservation.getConfirmationNumber() +
+            " for " + currentReservation.getGuest().getFullName() +
+            "\n\nCheck-in date was: " + currentReservation.getCheckInDate() +
+            "\n\nThis will mark the guest as a no-show.");
+
+        if (confirm.showAndWait().orElse(null) == ButtonType.OK) {
+            try {
+                currentReservation.setStatus(ReservationStatus.NO_SHOW);
+                ReservationRepository reservationRepo = new ReservationRepository();
+                reservationRepo.update(currentReservation);
+
+                showInfo("No Show", "Reservation Marked as No Show",
+                    "Reservation " + currentReservation.getConfirmationNumber() + " has been marked as no-show.");
+                auditService.log(authService.getCurrentUsername(), "NO_SHOW", "Reservation",
+                    currentReservation.getId().toString(),
+                    "Marked as no-show: " + currentReservation.getConfirmationNumber() +
+                    " for " + currentReservation.getGuest().getFullName());
+
+                loadReservations();
+                updateReservationDetailPanel();
+            } catch (Exception e) {
+                showError("Failed to mark as no-show: " + e.getMessage());
+            }
+        }
+    }
+
+    @FXML
+    private void deleteSelectedReservation() {
+        if (currentReservation == null) {
+            showError("Please select a reservation first");
+            return;
+        }
+
+        // Check if reservation has any payments
+        PaymentRepository paymentRepo = new PaymentRepository();
+        List<Payment> payments = paymentRepo.findByReservation(currentReservation);
+
+        if (!payments.isEmpty()) {
+            double totalPaid = payments.stream().mapToDouble(Payment::getAmount).sum();
+            showError("Cannot delete reservation with payments. Total paid: $" + String.format("%.2f", totalPaid) +
+                "\n\nPlease cancel the reservation instead, or contact system administrator.");
+            return;
+        }
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Delete Reservation");
+        confirm.setHeaderText("Permanently Delete Reservation?");
+        confirm.setContentText("This will permanently delete reservation " + currentReservation.getConfirmationNumber() +
+            " for " + currentReservation.getGuest().getFullName() + ".\n\nThis action cannot be undone!");
+
+        if (confirm.showAndWait().orElse(null) == ButtonType.OK) {
+            try {
+                ReservationRepository reservationRepo = new ReservationRepository();
+                String confNum = currentReservation.getConfirmationNumber();
+                Long resId = currentReservation.getId();
+                String guestName = currentReservation.getGuest().getFullName();
+
+                reservationRepo.delete(currentReservation);
+
+                showInfo("Deleted", "Reservation Deleted", "Reservation " + confNum + " has been permanently deleted.");
+                auditService.log(authService.getCurrentUsername(), "DELETE", "Reservation",
+                    resId.toString(), "Deleted reservation: " + confNum + " for " + guestName);
+
+                currentReservation = null;
+                loadReservations();
+                updateReservationDetailPanel();
+            } catch (Exception e) {
+                showError("Delete failed: " + e.getMessage());
+            }
+        }
+    }
+
     @SuppressWarnings("unchecked")
     private void setupRecentReservationsTableColumns() {
         ObservableList<TableColumn<Reservation, ?>> columns = recentReservationsTable.getColumns();
@@ -825,6 +923,51 @@ public class AdminController {
                 loadAllGuests(); // Refresh table
             } catch (Exception e) {
                 showError("Enrollment failed: " + e.getMessage());
+            }
+        }
+    }
+
+    @FXML
+    private void deleteSelectedGuest() {
+        if (currentGuest == null) {
+            showError("Please select a guest first");
+            return;
+        }
+
+        // Check if guest has any reservations
+        ReservationRepository reservationRepo = new ReservationRepository();
+        List<Reservation> reservations = reservationRepo.findByGuest(currentGuest);
+
+        if (!reservations.isEmpty()) {
+            showError("Cannot delete guest with existing reservations.\n\n" +
+                currentGuest.getFullName() + " has " + reservations.size() + " reservation(s).\n\n" +
+                "Please delete the reservations first.");
+            return;
+        }
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Delete Guest");
+        confirm.setHeaderText("Permanently Delete Guest?");
+        confirm.setContentText("This will permanently delete " + currentGuest.getFullName() +
+            " (" + currentGuest.getEmail() + ").\n\nThis action cannot be undone!");
+
+        if (confirm.showAndWait().orElse(null) == ButtonType.OK) {
+            try {
+                GuestRepository guestRepo = new GuestRepository();
+                String guestName = currentGuest.getFullName();
+                Long guestId = currentGuest.getId();
+
+                guestRepo.delete(currentGuest);
+
+                showInfo("Deleted", "Guest Deleted", guestName + " has been permanently deleted.");
+                auditService.log(authService.getCurrentUsername(), "DELETE", "Guest",
+                    guestId.toString(), "Deleted guest: " + guestName);
+
+                currentGuest = null;
+                loadAllGuests();
+                clearGuestSelection();
+            } catch (Exception e) {
+                showError("Delete failed: " + e.getMessage());
             }
         }
     }
@@ -2796,6 +2939,22 @@ public class AdminController {
         dialog.setHeaderText("Select a guest to enroll");
         dialog.setContentText("Guest:");
 
+        // Set string converter to display guest names properly instead of object references
+        @SuppressWarnings("unchecked")
+        javafx.scene.control.ComboBox<Guest> comboBox = (javafx.scene.control.ComboBox<Guest>) dialog.getDialogPane().lookup(".combo-box");
+        if (comboBox != null) {
+            comboBox.setConverter(new javafx.util.StringConverter<Guest>() {
+                @Override
+                public String toString(Guest guest) {
+                    return guest != null ? guest.getFullName() + " (" + guest.getEmail() + ")" : "";
+                }
+                @Override
+                public Guest fromString(String string) {
+                    return null;
+                }
+            });
+        }
+
         dialog.showAndWait().ifPresent(guest -> {
             String loyaltyNumber = loyaltyService.enrollGuest(guest);
             showInfo("Enrollment Successful", "New Loyalty Member",
@@ -2849,6 +3008,106 @@ public class AdminController {
         if (guestSearchField != null) guestSearchField.clear();
         if (loyaltyFilter != null) loyaltyFilter.setValue("All Guests");
         loadAllGuests();
+    }
+
+    @FXML
+    private void addNewGuest() {
+        // Create dialog for adding new guest
+        Dialog<Guest> dialog = new Dialog<>();
+        dialog.setTitle("Add New Guest");
+        dialog.setHeaderText("Enter guest information");
+
+        // Set button types
+        ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
+
+        // Create form fields
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new javafx.geometry.Insets(20, 150, 10, 10));
+
+        TextField firstNameField = new TextField();
+        firstNameField.setPromptText("First Name");
+        TextField lastNameField = new TextField();
+        lastNameField.setPromptText("Last Name");
+        TextField emailField = new TextField();
+        emailField.setPromptText("Email");
+        TextField phoneField = new TextField();
+        phoneField.setPromptText("Phone (e.g., 416-555-1234)");
+
+        grid.add(new Label("First Name:"), 0, 0);
+        grid.add(firstNameField, 1, 0);
+        grid.add(new Label("Last Name:"), 0, 1);
+        grid.add(lastNameField, 1, 1);
+        grid.add(new Label("Email:"), 0, 2);
+        grid.add(emailField, 1, 2);
+        grid.add(new Label("Phone:"), 0, 3);
+        grid.add(phoneField, 1, 3);
+
+        dialog.getDialogPane().setContent(grid);
+
+        // Request focus on first name field
+        javafx.application.Platform.runLater(firstNameField::requestFocus);
+
+        // Enable/disable save button based on input
+        javafx.scene.Node saveButton = dialog.getDialogPane().lookupButton(saveButtonType);
+        saveButton.setDisable(true);
+
+        // Validation listener
+        javafx.beans.value.ChangeListener<String> validationListener = (obs, oldVal, newVal) -> {
+            boolean valid = !firstNameField.getText().trim().isEmpty()
+                && !lastNameField.getText().trim().isEmpty()
+                && !emailField.getText().trim().isEmpty()
+                && emailField.getText().contains("@")
+                && !phoneField.getText().trim().isEmpty();
+            saveButton.setDisable(!valid);
+        };
+
+        firstNameField.textProperty().addListener(validationListener);
+        lastNameField.textProperty().addListener(validationListener);
+        emailField.textProperty().addListener(validationListener);
+        phoneField.textProperty().addListener(validationListener);
+
+        // Convert result
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == saveButtonType) {
+                return new Guest(
+                    firstNameField.getText().trim(),
+                    lastNameField.getText().trim(),
+                    emailField.getText().trim(),
+                    phoneField.getText().trim()
+                );
+            }
+            return null;
+        });
+
+        dialog.showAndWait().ifPresent(guest -> {
+            try {
+                GuestRepository guestRepo = new GuestRepository();
+
+                // Check for duplicate email
+                if (guestRepo.findByEmail(guest.getEmail()) != null) {
+                    showError("A guest with this email already exists.");
+                    return;
+                }
+
+                // Save guest
+                guestRepo.save(guest);
+
+                showInfo("Guest Added", "Success",
+                    guest.getFullName() + " has been added to the system.");
+
+                auditService.log(authService.getCurrentUsername(), "GUEST_CREATE", "Guest",
+                    guest.getId().toString(), "Created new guest: " + guest.getFullName());
+
+                // Refresh guest list
+                loadAllGuests();
+
+            } catch (Exception e) {
+                showError("Failed to add guest: " + e.getMessage());
+            }
+        });
     }
 
     // ========== Reports ==========
