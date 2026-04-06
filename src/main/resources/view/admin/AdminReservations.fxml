@@ -173,6 +173,8 @@
                 <Button text="Check-In Guest" styleClass="btn-primary" maxWidth="Infinity" onAction="#checkInSelectedReservation"/>
                 <Button text="Process Payment" styleClass="btn-success" maxWidth="Infinity" onAction="#goToPaymentForSelected"/>
                 <Button text="Cancel Reservation" styleClass="btn-danger" maxWidth="Infinity" onAction="#cancelSelectedReservation"/>
+                <Button text="Mark as No Show" styleClass="btn-secondary" style="-fx-background-color: #e67e22;" maxWidth="Infinity" onAction="#markAsNoShow"/>
+                <Button text="Delete Reservation" styleClass="btn-secondary" style="-fx-background-color: #7f8c8d;" maxWidth="Infinity" onAction="#deleteSelectedReservation"/>
             </VBox>
         </VBox>
     </right>

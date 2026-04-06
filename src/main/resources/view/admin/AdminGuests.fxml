@@ -63,8 +63,10 @@
             <!-- Guests table -->
             <VBox styleClass="card" spacing="15" VBox.vgrow="ALWAYS">
                 <HBox alignment="CENTER_LEFT" spacing="15">
-                    <Label text="Guests" style="-fx-font-size: 16px; -fx-font-weight: bold;" HBox.hgrow="ALWAYS"/>
+                    <Label text="Guests" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
                     <Label fx:id="guestCountLabel" text="Showing 0 guests" style="-fx-text-fill: #7f8c8d;"/>
+                    <Button text="+ Add Guest" styleClass="btn-success" onAction="#addNewGuest"/>
                 </HBox>
 
                 <TableView fx:id="guestsTable" VBox.vgrow="ALWAYS">
@@ -135,6 +137,7 @@
             <VBox spacing="10">
                 <Button text="View All Reservations" styleClass="btn-secondary" maxWidth="Infinity" onAction="#viewGuestReservations"/>
                 <Button text="Enroll in Loyalty" fx:id="enrollLoyaltyBtn" styleClass="btn-primary" maxWidth="Infinity" onAction="#enrollGuestInLoyalty"/>
+                <Button text="Delete Guest" styleClass="btn-danger" maxWidth="Infinity" onAction="#deleteSelectedGuest"/>
             </VBox>
         </VBox>
     </right>
