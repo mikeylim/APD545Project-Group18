@@ -152,6 +152,13 @@ public class ReservationService {
     }
 
     /**
+     * Get reservations by date range.
+     */
+    public List<Reservation> getReservationsByDateRange(LocalDate startDate, LocalDate endDate) {
+        return reservationRepository.findByDateRange(startDate, endDate);
+    }
+
+    /**
      * Get reservations by status.
      */
     public List<Reservation> getReservationsByStatus(ReservationStatus status) {
@@ -185,5 +192,13 @@ public class ReservationService {
      */
     public Reservation checkOut(Reservation reservation) {
         return updateStatus(reservation, ReservationStatus.CHECKED_OUT);
+    }
+
+    /**
+     * Find checked-out reservations by guest phone number.
+     * Returns most recent first (for feedback eligibility).
+     */
+    public List<Reservation> findCheckedOutByPhone(String phone) {
+        return reservationRepository.findCheckedOutByPhone(phone);
     }
 }

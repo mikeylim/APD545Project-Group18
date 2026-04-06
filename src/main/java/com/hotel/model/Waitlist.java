@@ -25,6 +25,12 @@ public class Waitlist {
     @Column(nullable = false)
     private LocalDate desiredCheckOut;
 
+    @Column(columnDefinition = "INT DEFAULT 1")
+    private Integer adults = 1;
+
+    @Column(columnDefinition = "INT DEFAULT 0")
+    private Integer children = 0;
+
     @Column
     private LocalDateTime createdAt;
 
@@ -110,5 +116,30 @@ public class Waitlist {
 
     public void setConverted(boolean converted) {
         this.converted = converted;
+    }
+
+    public int getAdults() {
+        return adults != null ? adults : 1;
+    }
+
+    public void setAdults(int adults) {
+        this.adults = adults;
+    }
+
+    public int getChildren() {
+        return children != null ? children : 0;
+    }
+
+    public void setChildren(int children) {
+        this.children = children;
+    }
+
+    public String getGuestCountDisplay() {
+        int a = getAdults();
+        int c = getChildren();
+        if (c > 0) {
+            return a + "A, " + c + "C";
+        }
+        return a + "A";
     }
 }

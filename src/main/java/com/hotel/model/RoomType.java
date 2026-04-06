@@ -11,8 +11,8 @@ package com.hotel.model;
 public enum RoomType {
     SINGLE("Single Room", 100.00, 2),
     DOUBLE("Double Room", 150.00, 4),
-    DELUXE("Deluxe Room", 200.00, 2),
-    PENTHOUSE("Penthouse Suite", 350.00, 2);
+    DELUXE("Deluxe Room", 200.00, 4),
+    PENTHOUSE("Penthouse Suite", 350.00, 6);
 
     private final String displayName;
     private final double basePrice;

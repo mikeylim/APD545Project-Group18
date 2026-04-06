@@ -7,13 +7,13 @@ This project follows the **MVC (Model-View-Controller)** architecture pattern wi
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    PRESENTATION LAYER                        │
-│  (FXML Views + CSS Styling)                                 │
+│  (FXML Views + CSS Styling + Controllers)                   │
 ├─────────────────────────────────────────────────────────────┤
 │                    BUSINESS LOGIC LAYER                      │
-│  (Controllers + Services)                                    │
+│  (Services + Design Patterns)                               │
 ├─────────────────────────────────────────────────────────────┤
 │                    DATA ACCESS LAYER                         │
-│  (Repositories + Models)                                     │
+│  (Repositories + JPA Entities + H2 Database)                │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -23,30 +23,81 @@ This project follows the **MVC (Model-View-Controller)** architecture pattern wi
 Project/
 ├── src/main/java/com/hotel/
 │   ├── app/
-│   │   └── Main.java              # Application entry point
+│   │   ├── Main.java                    # Application entry point
+│   │   ├── AppContext.java              # Dependency injection container
+│   │   ├── DatabaseInitializer.java     # Seeds initial data
+│   │   └── EntityManagerFactoryProvider.java  # Singleton EMF
 │   ├── controller/
-│   │   ├── LauncherController.java    # Main menu controller
-│   │   ├── AdminController.java       # Admin dashboard controller
-│   │   ├── KioskController.java       # Self-service kiosk controller
-│   │   └── FeedbackController.java    # Feedback system controller
-│   ├── model/                     # Data models (TO BE IMPLEMENTED)
-│   ├── repository/                # Database access (TO BE IMPLEMENTED)
-│   └── service/                   # Business logic (TO BE IMPLEMENTED)
+│   │   ├── LauncherController.java      # Main menu controller
+│   │   ├── AdminController.java         # Admin dashboard controller
+│   │   ├── KioskController.java         # Self-service kiosk controller
+│   │   └── FeedbackController.java      # Feedback system controller
+│   ├── model/
+│   │   ├── Guest.java                   # Guest entity
+│   │   ├── Room.java                    # Room entity
+│   │   ├── Reservation.java             # Reservation entity
+│   │   ├── Payment.java                 # Payment entity
+│   │   ├── Addon.java                   # Add-on service entity
+│   │   ├── User.java                    # Admin/Manager account entity
+│   │   ├── Feedback.java                # Guest feedback entity
+│   │   ├── Waitlist.java                # Waitlist entry entity
+│   │   ├── AuditLog.java                # Activity log entity
+│   │   └── enums/                       # RoomType, RoomStatus, etc.
+│   ├── repository/
+│   │   ├── GenericRepository.java       # Base CRUD operations
+│   │   ├── RoomRepository.java
+│   │   ├── GuestRepository.java
+│   │   ├── ReservationRepository.java
+│   │   ├── PaymentRepository.java
+│   │   ├── AddonRepository.java
+│   │   ├── UserRepository.java
+│   │   ├── FeedbackRepository.java
+│   │   ├── WaitlistRepository.java
+│   │   └── AuditLogRepository.java
+│   ├── service/
+│   │   ├── BookingSession.java          # Kiosk state singleton
+│   │   ├── ReservationService.java      # Booking logic
+│   │   ├── PricingService.java          # Pricing calculations
+│   │   ├── RoomFactory.java             # Factory Pattern
+│   │   ├── PricingStrategy.java         # Strategy interface
+│   │   ├── StandardPricingStrategy.java # Weekday pricing
+│   │   ├── WeekendPricingStrategy.java  # Weekend pricing (1.25x)
+│   │   ├── BookingDecorator.java        # Decorator Pattern
+│   │   ├── LoyaltyService.java          # Loyalty points management
+│   │   ├── WaitlistService.java         # Waitlist management
+│   │   ├── PaymentService.java          # Payment processing
+│   │   ├── FeedbackService.java         # Feedback management
+│   │   ├── ReportingService.java        # Report generation
+│   │   ├── AuditService.java            # Activity logging
+│   │   └── AuthService.java             # Authentication
+│   ├── events/                          # Observer Pattern
+│   │   ├── RoomAvailabilityEvent.java
+│   │   ├── RoomAvailabilityNotifier.java
+│   │   └── RoomAvailabilityObserver.java
+│   └── util/
+│       └── PdfExportUtil.java           # PDF generation
 │
 ├── src/main/resources/
+│   ├── META-INF/
+│   │   └── persistence.xml              # JPA configuration
 │   ├── view/
-│   │   ├── Launcher.fxml          # Main menu screen
-│   │   ├── admin/                 # Admin screens (11 FXML files)
-│   │   ├── kiosk/                 # Kiosk screens (8 FXML files)
-│   │   └── feedback/              # Feedback screens (2 FXML files)
+│   │   ├── Launcher.fxml                # Main menu screen
+│   │   ├── admin/                       # Admin screens (10 FXML files)
+│   │   ├── kiosk/                       # Kiosk screens (8 FXML files)
+│   │   └── feedback/                    # Feedback screens (3 FXML files)
 │   ├── css/
-│   │   └── styles.css             # Global stylesheet
+│   │   └── styles.css                   # Global stylesheet
 │   └── images/
-│       └── hotel-main.jpg         # Hotel image for kiosk
+│       └── hotel-main.jpg               # Hotel image for kiosk
 │
-├── SETUP.md                       # Setup instructions
-├── PROJECT_GUIDE.md               # This file
-└── .gitignore                     # Git ignore rules
+├── data/                                # H2 database files (auto-created)
+├── logs/                                # Rotating log files
+├── pom.xml                              # Maven configuration
+├── README.md                            # Project overview
+├── SETUP.md                             # Setup instructions
+├── PROJECT_GUIDE.md                     # This file
+├── DATABASE_DESIGN.md                   # Database documentation
+└── ProjectDocumentation.md              # Full project documentation
 ```
 
 ## Module Breakdown
@@ -70,26 +121,44 @@ Project/
 **Controller:** `AdminController.java`
 
 **Screens:**
-- `AdminLogin.fxml` - Staff login
+- `AdminLogin.fxml` - Staff login (BCrypt authentication)
 - `AdminDashboard.fxml` - Overview with stats
-- `AdminReservations.fxml` - Manage bookings
+- `AdminReservations.fxml` - Manage bookings (CRUD)
 - `AdminGuests.fxml` - Guest management
 - `AdminPayments.fxml` - Payment processing
-- `AdminCheckout.fxml` - Guest checkout
+- `AdminCheckout.fxml` - Guest checkout with balance settlement
 - `AdminWaitlist.fxml` - Waitlist management
 - `AdminFeedback.fxml` - View guest feedback
 - `AdminLoyalty.fxml` - Loyalty program management
-- `AdminReports.fxml` - Generate reports
+- `AdminReports.fxml` - Generate reports (CSV/PDF export)
 
 ### 3. Feedback Module
 
 **Controller:** `FeedbackController.java`
 
 **Screens:**
-- `GuestFeedback.fxml` - Submit feedback form
+- `FeedbackEntry.fxml` - Enter confirmation number
+- `FeedbackForm.fxml` - Submit rating and comments
 - `FeedbackConfirmation.fxml` - Thank you screen
 
+## Design Patterns Implemented
+
+| Pattern | Implementation | Purpose |
+|---------|----------------|---------|
+| **Singleton** | `EntityManagerFactoryProvider`, `LoyaltyService`, `AuditService`, `BookingSession` | Single instance management |
+| **Factory** | `RoomFactory`, `RoomPlanFactory` | Create room instances |
+| **Strategy** | `PricingStrategy`, `StandardPricingStrategy`, `WeekendPricingStrategy` | Dynamic pricing |
+| **Observer** | `RoomAvailabilityNotifier`, `RoomAvailabilityObserver` | Room availability notifications |
+| **Decorator** | `BookingDecorator`, `ServiceDecorator` | Add services to booking pricing |
+
 ## Key Technical Details
+
+### Database Configuration
+
+- **Type:** H2 Embedded (file-based)
+- **Location:** `./data/hoteldb.mv.db`
+- **ORM:** Hibernate 6.4.4 with JPA
+- **Schema:** Auto-generated from entities
 
 ### FXML Special Character Escaping
 
@@ -134,70 +203,84 @@ private void loadScreen(String fxmlPath, String title) {
 
 ## Implementation Status
 
-### Milestone 1: UI Prototype (CURRENT)
+### Milestone 1: UI Prototype - COMPLETE
 - [x] Launcher screen
 - [x] All Kiosk screens (8 screens)
-- [x] All Admin screens (11 screens)
-- [x] Feedback screens (2 screens)
+- [x] All Admin screens (10 screens)
+- [x] Feedback screens (3 screens)
 - [x] CSS styling
 - [x] Navigation between screens
 
-### Milestone 2: Backend (TO BE IMPLEMENTED)
-- [ ] Model classes (Guest, Reservation, Room, Payment, etc.)
-- [ ] Database setup (SQLite or MySQL)
-- [ ] Repository classes for data access
-- [ ] Service classes for business logic
+### Milestone 2: Backend - COMPLETE
+- [x] JPA Entity classes (Guest, Reservation, Room, Payment, etc.)
+- [x] H2 Database setup with Hibernate ORM
+- [x] Repository classes for data access
+- [x] Service classes for business logic
+- [x] Factory Pattern for room creation
+- [x] Strategy Pattern for pricing
 
-### Milestone 3: Integration (TO BE IMPLEMENTED)
-- [ ] Connect UI to backend
-- [ ] Form validation
-- [ ] Data persistence
-- [ ] Session management
+### Final Submission: Full Integration - COMPLETE
+- [x] Connect UI to backend
+- [x] Form validation
+- [x] Data persistence
+- [x] Session management
+- [x] Observer Pattern for room availability
+- [x] Decorator Pattern for add-on pricing
+- [x] BCrypt password hashing
+- [x] Rotating file logs
+- [x] Report generation (CSV/PDF)
+- [x] Loyalty program
+- [x] Waitlist management
 
-## Adding New Screens
+## Running the Application
 
-1. Create FXML file in appropriate folder (`view/admin/`, `view/kiosk/`, etc.)
-2. Set the controller in FXML: `fx:controller="com.hotel.controller.YourController"`
-3. Add navigation method in controller
-4. Add button/link to navigate to new screen
+### Using Maven (Recommended)
+
+```bash
+# Build the project
+mvn clean install
+
+# Run the application
+mvn javafx:run
+```
+
+### Default Login Accounts
+
+| Username | Password | Role |
+|----------|----------|------|
+| admin | admin123 | ADMIN |
+| manager | manager123 | MANAGER |
 
 ## Common Issues & Solutions
 
 ### "JavaFX runtime components are missing"
-- Ensure VM options are set with `--module-path` and `--add-modules`
+- Use `mvn javafx:run` to run with Maven
+- Or ensure VM options are set with `--module-path` and `--add-modules`
 
 ### "Could not find or load main class"
 - Check Main class is `com.hotel.app.Main`
-- Verify `src/main/java` is marked as Sources in Project Structure
+- Run `mvn clean install` first
+
+### Database issues
+- Delete the `/data` folder and restart to reset database
+- Tables are auto-created on first run
 
 ### Styling not applied
-- Run Build → Rebuild Project
-- Delete `out` folder and rebuild
+- Run `mvn clean install` to ensure resources are copied
+- Delete `target` folder and rebuild if issues persist
 
-### "Invalid path" or "Missing expression" errors
-- Check for unescaped `$` or `%` characters in FXML
-- Use `\$` for dollar signs, `\%` for percent signs
+## Team Information
 
-## Team Responsibilities (Suggested)
+**Group:** #18
+**Course:** APD545 NAA - Winter 2026
+**Members:** Dohyun Lim, Phuong Bac Nguyen, Eunki Kim
 
-| Module | Primary Developer | Backup |
-|--------|------------------|--------|
-| Kiosk UI | | |
-| Admin UI | | |
-| Feedback UI | | |
-| Models | | |
-| Repositories | | |
-| Services | | |
-| Testing | | |
+## Documentation
 
-## Git Workflow
-
-1. Always pull before starting work: `git pull origin main`
-2. Create feature branches: `git checkout -b feature/your-feature`
-3. Make small, focused commits
-4. Push and create pull request for review
-5. Merge after approval
-
-## Contact
-
-For questions or issues, reach out to team members or refer to SETUP.md.
+| Document | Description |
+|----------|-------------|
+| `README.md` | Project overview and quick start |
+| `SETUP.md` | Detailed setup instructions |
+| `PROJECT_GUIDE.md` | This file - architecture and structure |
+| `DATABASE_DESIGN.md` | Database schema and JPA documentation |
+| `ProjectDocumentation.md` | Full project documentation |

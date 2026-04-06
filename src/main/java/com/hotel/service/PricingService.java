@@ -69,14 +69,17 @@ public class PricingService {
     }
 
     /**
-     * Calculate the total addon cost.
+     * Calculate the total addon cost using the Decorator Pattern.
+     * Wraps add-ons as decorators to compute the combined price.
      */
     public double calculateAddonCost(List<Addon> addons, int nights) {
-        double total = 0;
-        for (Addon addon : addons) {
-            total += addon.calculateCost(nights);
+        if (addons == null || addons.isEmpty()) {
+            return 0;
         }
-        return total;
+        // Use Decorator pattern - create a booking component with add-ons
+        BookingDecorator.BookingComponent decorated =
+            BookingDecorator.createBookingWithAddons(0, "Add-ons", nights, addons);
+        return decorated.getPrice();
     }
 
     /**

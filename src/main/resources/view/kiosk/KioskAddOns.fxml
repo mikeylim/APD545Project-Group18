@@ -19,44 +19,47 @@
     </top>
 
     <center>
-        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
-            <VBox alignment="CENTER" spacing="20">
-                <padding><Insets top="20" bottom="20" left="40" right="40"/></padding>
+        <VBox spacing="20">
+            <padding><Insets top="30" bottom="0" left="50" right="50"/></padding>
 
-                <!-- Progress indicator -->
-                <HBox alignment="CENTER" spacing="20">
-                    <VBox alignment="CENTER" spacing="5">
-                        <Label text="✓" styleClass="kiosk-step-indicator kiosk-step-indicator-completed" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
-                        <Label text="Guests" style="-fx-font-size: 12px;"/>
-                    </VBox>
-                    <Label text="—" style="-fx-text-fill: #27ae60;"/>
-                    <VBox alignment="CENTER" spacing="5">
-                        <Label text="✓" styleClass="kiosk-step-indicator kiosk-step-indicator-completed" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
-                        <Label text="Dates" style="-fx-font-size: 12px;"/>
-                    </VBox>
-                    <Label text="—" style="-fx-text-fill: #27ae60;"/>
-                    <VBox alignment="CENTER" spacing="5">
-                        <Label text="✓" styleClass="kiosk-step-indicator kiosk-step-indicator-completed" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
-                        <Label text="Room" style="-fx-font-size: 12px;"/>
-                    </VBox>
-                    <Label text="—" style="-fx-text-fill: #27ae60;"/>
-                    <VBox alignment="CENTER" spacing="5">
-                        <Label text="4" styleClass="kiosk-step-indicator kiosk-step-indicator-active" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
-                        <Label text="Add-ons" style="-fx-font-size: 12px;"/>
-                    </VBox>
-                    <Label text="—" style="-fx-text-fill: #bdc3c7;"/>
-                    <VBox alignment="CENTER" spacing="5">
-                        <Label text="5" styleClass="kiosk-step-indicator" style="-fx-text-fill: white;"/>
-                        <Label text="Details" style="-fx-font-size: 12px; -fx-text-fill: #bdc3c7;"/>
-                    </VBox>
-                    <Label text="—" style="-fx-text-fill: #bdc3c7;"/>
-                    <VBox alignment="CENTER" spacing="5">
-                        <Label text="6" styleClass="kiosk-step-indicator" style="-fx-text-fill: white;"/>
-                        <Label text="Confirm" style="-fx-font-size: 12px; -fx-text-fill: #bdc3c7;"/>
-                    </VBox>
-                </HBox>
+            <!-- Progress indicator (fixed position) -->
+            <HBox alignment="CENTER" spacing="20">
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="✓" styleClass="kiosk-step-indicator kiosk-step-indicator-completed"/>
+                    <Label text="Guests" styleClass="kiosk-step-label-completed"/>
+                </VBox>
+                <Label text="—" styleClass="kiosk-step-connector-completed"/>
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="✓" styleClass="kiosk-step-indicator kiosk-step-indicator-completed"/>
+                    <Label text="Dates" styleClass="kiosk-step-label-completed"/>
+                </VBox>
+                <Label text="—" styleClass="kiosk-step-connector-completed"/>
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="✓" styleClass="kiosk-step-indicator kiosk-step-indicator-completed"/>
+                    <Label text="Room" styleClass="kiosk-step-label-completed"/>
+                </VBox>
+                <Label text="—" styleClass="kiosk-step-connector-completed"/>
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="4" styleClass="kiosk-step-indicator kiosk-step-indicator-active"/>
+                    <Label text="Add-ons" styleClass="kiosk-step-label-active"/>
+                </VBox>
+                <Label text="—" styleClass="kiosk-step-connector"/>
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="5" styleClass="kiosk-step-indicator"/>
+                    <Label text="Details" styleClass="kiosk-step-label"/>
+                </VBox>
+                <Label text="—" styleClass="kiosk-step-connector"/>
+                <VBox alignment="CENTER" spacing="5">
+                    <Label text="6" styleClass="kiosk-step-indicator"/>
+                    <Label text="Confirm" styleClass="kiosk-step-label"/>
+                </VBox>
+            </HBox>
 
-                <!-- Main content -->
+            <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS">
+                <VBox alignment="CENTER" spacing="20">
+                    <padding><Insets top="10" bottom="20" left="0" right="0"/></padding>
+
+                    <!-- Main content -->
                 <VBox styleClass="card" spacing="25" prefWidth="800">
                     <padding><Insets top="25" right="25" bottom="25" left="25"/></padding>
 
@@ -137,16 +140,16 @@
                     <VBox spacing="10" style="-fx-background-color: #f8f9fa; -fx-padding: 20; -fx-background-radius: 8;">
                         <Label text="Price Impact Summary" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
                         <Separator/>
-                        <HBox alignment="CENTER_LEFT">
+                        <HBox spacing="20" alignment="CENTER_LEFT">
                             <Label text="Room Total (2 nights):" HBox.hgrow="ALWAYS"/>
                             <Label fx:id="roomTotalLabel" text="\$300.00" style="-fx-font-weight: bold;"/>
                         </HBox>
-                        <HBox alignment="CENTER_LEFT">
+                        <HBox spacing="20" alignment="CENTER_LEFT">
                             <Label text="Add-ons Selected:" HBox.hgrow="ALWAYS"/>
                             <Label fx:id="addonsSelectedLabel" text="\$0.00" style="-fx-font-weight: bold;"/>
                         </HBox>
                         <Separator/>
-                        <HBox alignment="CENTER_LEFT">
+                        <HBox spacing="20" alignment="CENTER_LEFT">
                             <Label text="Subtotal:" style="-fx-font-size: 16px; -fx-font-weight: bold;" HBox.hgrow="ALWAYS"/>
                             <Label fx:id="subtotalLabel" text="\$300.00" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #27ae60;"/>
                         </HBox>
@@ -155,8 +158,9 @@
 
                     <Label text="You can skip add-ons if you prefer. They can also be added later at the front desk." style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d; -fx-font-style: italic;"/>
                 </VBox>
-            </VBox>
-        </ScrollPane>
+                </VBox>
+            </ScrollPane>
+        </VBox>
     </center>
 
     <!-- Navigation -->
