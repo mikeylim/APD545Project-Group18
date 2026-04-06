@@ -318,7 +318,7 @@ This project follows a **3-tier architecture**:
 - Manager: up to 30%
 
 ### Loyalty (Nexus Rewards)
-- Earn 10 points per $1 spent
+- Earn 5 points per $1 spent (5% return rate)
 - Redeem 100 points = $1 discount
 - Welcome bonus: 100 points on enrollment
 - Points balance tracked per guest

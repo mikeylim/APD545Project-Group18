@@ -19,7 +19,7 @@ public class LoyaltyService {
     private final AuditService auditService;
 
     // Configurable rates (can be changed via setters)
-    private double pointsPerDollar = 10.0;  // Earn 10 points per $1 spent
+    private double pointsPerDollar = 5.0;  // Earn 5 points per $1 spent (5% return rate)
     private int pointsPerRedemptionDollar = 100;  // 100 points = $1 redemption
     private int maxPointsPerRedemption = 5000;  // Max 5000 points per transaction ($50)
     private int minPointsToRedeem = 100;  // Minimum points to redeem

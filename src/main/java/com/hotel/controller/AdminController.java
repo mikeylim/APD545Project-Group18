@@ -1677,9 +1677,11 @@ public class AdminController {
         }
 
         // Update loyalty points section if guest has points
+        // Refresh guest from database to get current loyalty points
         if (loyaltyPointsSection != null && availablePointsLabel != null) {
-            Guest guest = currentReservation.getGuest();
-            if (guest.getLoyaltyNumber() != null && guest.getLoyaltyPoints() > 0) {
+            GuestRepository guestRepo = new GuestRepository();
+            Guest guest = guestRepo.findById(currentReservation.getGuest().getId()).orElse(null);
+            if (guest != null && guest.getLoyaltyNumber() != null && guest.getLoyaltyPoints() > 0) {
                 loyaltyPointsSection.setVisible(true);
                 loyaltyPointsSection.setManaged(true);
                 double pointsValue = guest.getLoyaltyPoints() * 0.01; // $0.01 per point
@@ -2798,7 +2800,7 @@ public class AdminController {
             String loyaltyNumber = loyaltyService.enrollGuest(guest);
             showInfo("Enrollment Successful", "New Loyalty Member",
                 guest.getFullName() + " has been enrolled!\n\nLoyalty Number: " + loyaltyNumber +
-                "\nStarting Points: 0\n\nThey will earn 10 points per $1 spent.");
+                "\nStarting Points: 0\n\nThey will earn 5 points per $1 spent (5% return rate).");
             auditService.log(authService.getCurrentUsername(), "LOYALTY_ENROLL", "Guest",
                 guest.getId().toString(), "Enrolled guest in loyalty: " + guest.getFullName());
             loadLoyaltyMembers();

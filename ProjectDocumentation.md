@@ -704,7 +704,7 @@ public class ServiceDecorator extends BookingDecorator {
 
 | Rule | Value |
 |------|-------|
-| Points Earned | 10 points per $1 spent |
+| Points Earned | 5 points per $1 spent (5% return rate) |
 | Points Redemption | 100 points = $1 discount |
 | Welcome Bonus | 100 points on enrollment |
 | Minimum Redemption | 100 points |
