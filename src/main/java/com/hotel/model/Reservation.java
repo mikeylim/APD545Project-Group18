@@ -117,13 +117,14 @@ public class Reservation {
         return (int) (checkOutDate.toEpochDay() - checkInDate.toEpochDay());
     }
 
-    // Balance calculation
+    // Balance calculation (rounded to 2 decimal places to avoid floating point precision issues)
     public double getBalance() {
-        return total - amountPaid;
+        return Math.round((total - amountPaid) * 100.0) / 100.0;
     }
 
     public boolean isFullyPaid() {
-        return amountPaid >= total;
+        // Use small tolerance (0.01) to handle floating point precision issues
+        return amountPaid >= total - 0.01;
     }
 
     // Getters and Setters

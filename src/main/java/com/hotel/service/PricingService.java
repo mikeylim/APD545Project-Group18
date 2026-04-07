@@ -92,6 +92,7 @@ public class PricingService {
     /**
      * Calculate complete reservation pricing.
      * Sets subtotal, tax, and total on the reservation.
+     * All values are rounded to 2 decimal places to avoid floating point precision issues.
      */
     public void calculateReservationPricing(Reservation reservation) {
         LocalDate checkIn = reservation.getCheckInDate();
@@ -104,10 +105,10 @@ public class PricingService {
         // Calculate addon costs
         double addonCost = calculateAddonCost(reservation.getAddons(), nights);
 
-        // Calculate subtotal and tax
-        double subtotal = roomCost + addonCost;
-        double tax = calculateTax(subtotal);
-        double total = subtotal + tax;
+        // Calculate subtotal and tax (rounded to 2 decimal places)
+        double subtotal = Math.round((roomCost + addonCost) * 100.0) / 100.0;
+        double tax = Math.round(calculateTax(subtotal) * 100.0) / 100.0;
+        double total = Math.round((subtotal + tax) * 100.0) / 100.0;
 
         // Set values on reservation
         reservation.setSubtotal(subtotal);

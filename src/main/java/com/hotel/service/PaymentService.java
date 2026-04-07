@@ -218,14 +218,14 @@ public class PaymentService {
         reservation.setDiscountPercent(discountPercent);
         reservation.setDiscountAmount(discountAmount);
 
-        // Update reservation pricing
-        double newSubtotal = reservation.getSubtotal() - discountAmount;
+        // Update reservation pricing (round to 2 decimal places to avoid floating point precision issues)
+        double newSubtotal = Math.round((reservation.getSubtotal() - discountAmount) * 100.0) / 100.0;
         reservation.setSubtotal(newSubtotal);
 
-        // Recalculate tax and total
-        double tax = newSubtotal * 0.13; // 13% HST
+        // Recalculate tax and total (round to avoid floating point precision issues)
+        double tax = Math.round(newSubtotal * 0.13 * 100.0) / 100.0; // 13% HST
         reservation.setTax(tax);
-        reservation.setTotal(newSubtotal + tax);
+        reservation.setTotal(Math.round((newSubtotal + tax) * 100.0) / 100.0);
 
         reservationRepository.update(reservation);
 
